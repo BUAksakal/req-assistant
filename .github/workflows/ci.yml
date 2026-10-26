@@ -10,3 +10,5 @@ jobs:
       - uses: astral-sh/setup-uv@v10.3.2
       - run: uv sync
       - run: uv run pytest
+      - run: uv run ruff check
+      - run: uv run ruff format --check
