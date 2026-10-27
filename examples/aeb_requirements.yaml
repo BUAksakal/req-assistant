@@ -2,7 +2,7 @@ document:
   company: Musterwerk Automotive GmbH
   title: "Lastenheft: Autonomous Emergency Braking (AEB)"
   doc_id: LH-AEB-0001
-  version: "0.1"
+  version: "0.2"
   date: "2026-10-27"
   status: Draft
   confidentiality: Internal
@@ -11,24 +11,34 @@ document:
       date: "2026-10-27"
       author: B. Aksakal
       change: Initial draft
+    - version: "0.2"
+      date: "2026-10-27"
+      author: B. Aksakal
+      change: Added system status, failure handling and diagnostics
 
 sections:
   - number: "1"
     title: Introduction
-    text: >
+    text: >-
       This document specifies the requirements for the Autonomous Emergency
       Braking (AEB) system of passenger cars (category M1). It is intended for
-      suppliers responding to the request for quotation.
+      suppliers responding to the request for quotation. The supplier shall
+      confirm each requirement in the compliance matrix delivered with the
+      quotation.
 
   - number: "2"
     title: Scope
-    text: >
+    text: >-
       The AEB system detects vehicles ahead and warns the driver. If the driver
       does not react, the system brakes automatically to avoid or mitigate a
-      collision.
+      collision. Pedestrian and cyclist detection are out of scope for this
+      version of the document and will be specified separately.
 
   - number: "3"
     title: Activation and Braking
+    text: >-
+      This section describes when the system is active and how the emergency
+      braking phase is performed.
     requirements:
       - id: AEB-001
         title: Operating speed range
@@ -44,19 +54,93 @@ sections:
         title: Braking reaction
         text: The system shall brake fast when a collision is imminent.
         error: vague
+
+      - id: AEB-004
+        title: Speed reduction
+        text: >-
+          In the stationary target test scenario, the emergency braking phase
+          shall reduce the vehicle speed by at least 20 km/h before the
+          estimated point of impact, measured from the start of the emergency
+          braking phase.
+
+      - id: AEB-005
+        title: Earliest braking start
+        text: >-
+          The emergency braking phase shall not start earlier than 3.0 s before
+          the estimated time to collision.
+
+      - id: AEB-006
+        title: Weather robustness
+        text: The system shall work reliably in all weather conditions.
+        error: untestable
     note: Speed values refer to the speed shown on the vehicle speedometer.
 
   - number: "4"
     title: Driver Warning and Interaction
     requirements:
-      - id: AEB-004
+      - id: AEB-007
         title: Collision warning
         text: The system shall warn the driver at least 0.8 s before emergency braking starts.
 
-      - id: AEB-005
+      - id: AEB-008
         title: Warning type
         text: The collision warning shall be acoustic and visual.
 
-      - id: AEB-006
+      - id: AEB-009
         title: Driver override
         text: The driver shall be able to interrupt emergency braking by pressing the accelerator pedal.
+
+      - id: AEB-010
+        title: Warning perceptibility
+        text: The collision warning shall be clearly perceptible to the driver.
+        error: vague
+
+  - number: "5"
+    title: System Status and Deactivation
+    text: >-
+      The driver may deactivate the system manually, for example during
+      off-road driving or when towing. The following requirements limit how
+      deactivation is done and how the system status is shown.
+    requirements:
+      - id: AEB-011
+        title: Automatic reactivation
+        text: The system shall be automatically reactivated at the start of each engine start cycle.
+
+      - id: AEB-012
+        title: Manual deactivation
+        text: >-
+          Manual deactivation of the system shall require at least two
+          deliberate actions by the driver, such as selecting a menu entry and
+          confirming the selection, so that the system cannot be switched off
+          by a single accidental button press.
+
+      - id: AEB-013
+        title: Deactivation indication
+        text: When the system is deactivated, a constant optical warning signal shall be shown to the driver.
+
+      - id: AEB-014
+        title: Failure warning time
+        text: A failure warning signal shall be displayed within 10 s after a system failure is detected.
+
+  - number: "6"
+    title: Diagnostics and Robustness
+    requirements:
+      - id: AEB-015
+        title: Diagnostic trouble codes
+        text: The system shall store a diagnostic trouble code for each detected sensor fault.
+
+      - id: AEB-016
+        title: False interventions
+        text: The system shall avoid false braking interventions as far as possible.
+        error: vague
+
+      - id: AEB-017
+        title: Sensor range
+        text: The radar sensor shall detect vehicles ahead at a distance of at least 150 m.
+
+      - id: AEB-018
+        title: Failure warning time (diagnostics)
+        text: The failure warning signal shall be displayed within 5 s after a system failure is detected.
+        error: conflict
+        conflicts_with: AEB-014
+    note: Diagnostic trouble codes follow the format defined in the Musterwerk diagnostics guideline.
