@@ -2,7 +2,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from req_assistant.cli import app
+from reqlens.cli import app
 
 PDF = Path(__file__).resolve().parent.parent / "examples" / "aeb_lastenheft.pdf"
 runner = CliRunner()

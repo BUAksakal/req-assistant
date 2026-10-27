@@ -1,7 +1,7 @@
 [project]
-name = "req-assistant"
+name = "reqlens"
 version = "0.1.0"
-description = "Add your description here"
+description = "Requirements analysis for the automotive industry: extract requirements from PDF specifications and find conflicts and ambiguity."
 readme = "README.md"
 authors = [
     { name = "Berke Aksakal", email = "141648712+BUAksakal@users.noreply.github.com" }
@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
-req = "req_assistant.cli:app"
+reqlens = "reqlens.cli:app"
 
 [build-system]
 requires = ["uv_build>=0.13.5,<0.14.0"]

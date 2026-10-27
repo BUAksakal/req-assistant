@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="ReqLens: requirements analysis for the automotive industry">
+  <rect width="1200" height="300" rx="24" fill="#0B1F33"/>
+  <g fill="none" stroke="#1E3A56" stroke-width="2">
+    <line x1="0" y1="250" x2="1200" y2="250"/>
+    <line x1="0" y1="270" x2="1200" y2="270" stroke-dasharray="40 30"/>
+  </g>
+  <g transform="translate(150 150)">
+    <rect x="-70" y="-90" width="120" height="160" rx="10" fill="#F4F7FA"/>
+    <rect x="-50" y="-62" width="80" height="8" rx="4" fill="#9FB3C8"/>
+    <rect x="-50" y="-42" width="64" height="8" rx="4" fill="#9FB3C8"/>
+    <rect x="-50" y="-22" width="72" height="8" rx="4" fill="#F5A524"/>
+    <rect x="-50" y="-2" width="56" height="8" rx="4" fill="#9FB3C8"/>
+    <rect x="-50" y="18" width="76" height="8" rx="4" fill="#9FB3C8"/>
+    <circle cx="30" cy="10" r="46" fill="#0B1F33" fill-opacity="0.15" stroke="#38BDF8" stroke-width="10"/>
+    <line x1="63" y1="43" x2="100" y2="80" stroke="#38BDF8" stroke-width="14" stroke-linecap="round"/>
+  </g>
+  <text x="320" y="140" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#FFFFFF">Req<tspan fill="#38BDF8">Lens</tspan></text>
+  <text x="324" y="194" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" fill="#C9D6E3">Requirements analysis for the automotive industry</text>
+</svg>

@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from req_assistant.models import Requirement
+from reqlens.models import Requirement
 
 
 def test_valid_requirement():

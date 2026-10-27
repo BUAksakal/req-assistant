@@ -6,9 +6,9 @@ from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import interrupt
 
-from req_assistant.ambiguity import find_vague_words
-from req_assistant.models import Requirement
-from req_assistant.pdf_reader import extract_requirements
+from reqlens.ambiguity import find_vague_words
+from reqlens.models import Requirement
+from reqlens.pdf_reader import extract_requirements
 
 
 class State(TypedDict, total=False):
@@ -25,8 +25,8 @@ def classic_extract(state: State) -> State:
 
 
 def ai_extract(state: State) -> State:
-    from req_assistant.ai_parser import extract_requirements_ai
-    from req_assistant.llm import call_with_retry
+    from reqlens.ai_parser import extract_requirements_ai
+    from reqlens.llm import call_with_retry
 
     return {"requirements": call_with_retry(extract_requirements_ai, state["pdf"])}
 
@@ -45,8 +45,8 @@ def check_vague(state: State) -> State:
 
 
 def check_conflicts(state: State) -> State:
-    from req_assistant.analysis_agent import make_conflict_checker
-    from req_assistant.llm import call_with_retry
+    from reqlens.analysis_agent import make_conflict_checker
+    from reqlens.llm import call_with_retry
 
     check = make_conflict_checker(state["requirements"])
     conflicts = {}
@@ -90,6 +90,6 @@ def build_workflow():
     graph.add_edge("review", "write_report")
     graph.add_edge("write_report", END)
     serde = JsonPlusSerializer(
-        allowed_msgpack_modules=[("req_assistant.models", "Requirement")]
+        allowed_msgpack_modules=[("reqlens.models", "Requirement")]
     )
     return graph.compile(checkpointer=InMemorySaver(serde=serde))

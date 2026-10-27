@@ -3,14 +3,14 @@ from typing import Annotated
 
 import typer
 
-from req_assistant.pdf_reader import extract_requirements
+from reqlens.pdf_reader import extract_requirements
 
-app = typer.Typer(help="Automotive requirements assistant.")
+app = typer.Typer(help="ReqLens: requirements analysis for the automotive industry.")
 
 
 @app.callback()
 def main() -> None:
-    """Automotive requirements assistant."""
+    """ReqLens: requirements analysis for the automotive industry."""
 
 
 @app.command()
@@ -20,7 +20,7 @@ def parse(
 ) -> None:
     """Extract requirements from a specification PDF."""
     if ai:
-        from req_assistant.ai_parser import extract_requirements_ai
+        from reqlens.ai_parser import extract_requirements_ai
 
         requirements = extract_requirements_ai(pdf)
     else:
@@ -37,7 +37,7 @@ def analyze(
     """Run the full workflow and let the engineer approve each finding."""
     from langgraph.types import Command
 
-    from req_assistant.workflow import build_workflow
+    from reqlens.workflow import build_workflow
 
     workflow = build_workflow()
     config = {"configurable": {"thread_id": pdf.name}}
