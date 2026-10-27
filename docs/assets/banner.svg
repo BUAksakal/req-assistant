@@ -1,19 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="ReqLens: requirements analysis for the automotive industry">
-  <rect width="1200" height="300" rx="24" fill="#0B1F33"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="300" viewBox="0 0 1400 300" role="img" aria-label="ReqLens: requirements analysis for the automotive industry">
+  <defs>
+    <clipPath id="spot"><circle cx="140" cy="140" r="112"/></clipPath>
+  </defs>
+  <rect width="1400" height="300" rx="24" fill="#0B1F33"/>
   <g fill="none" stroke="#1E3A56" stroke-width="2">
-    <line x1="0" y1="250" x2="1200" y2="250"/>
-    <line x1="0" y1="270" x2="1200" y2="270" stroke-dasharray="40 30"/>
+    <line x1="0" y1="250" x2="1400" y2="250"/>
+    <line x1="0" y1="270" x2="1400" y2="270" stroke-dasharray="40 30"/>
   </g>
-  <g transform="translate(150 150)">
-    <rect x="-70" y="-90" width="120" height="160" rx="10" fill="#F4F7FA"/>
-    <rect x="-50" y="-62" width="80" height="8" rx="4" fill="#9FB3C8"/>
-    <rect x="-50" y="-42" width="64" height="8" rx="4" fill="#9FB3C8"/>
-    <rect x="-50" y="-22" width="72" height="8" rx="4" fill="#F5A524"/>
-    <rect x="-50" y="-2" width="56" height="8" rx="4" fill="#9FB3C8"/>
-    <rect x="-50" y="18" width="76" height="8" rx="4" fill="#9FB3C8"/>
-    <circle cx="30" cy="10" r="46" fill="#0B1F33" fill-opacity="0.15" stroke="#38BDF8" stroke-width="10"/>
-    <line x1="63" y1="43" x2="100" y2="80" stroke="#38BDF8" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="140" cy="140" r="112" fill="#E8DCC0"/>
+  <g clip-path="url(#spot)" fill="#0B1F33" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 270 Q32 192 80 168 Q100 158 120 160 Q150 162 170 178 Q188 196 194 270 Z"/>
+    <path d="M82 170 Q68 142 90 122 Q96 146 114 162 Z"/>
+    <path d="M100 80 L158 80 Q160 86 163 92 Q166 100 173 107 Q168 111 165 112 Q168 116 166 119 Q163 121 165 124 Q166 130 161 136 Q152 145 138 148 L134 164 L108 164 Q100 142 98 118 Q96 96 100 80 Z"/>
+    <path d="M88 86 L88 78 Q90 42 124 38 Q156 40 160 76 L160 86 Z"/>
+    <path d="M150 70 Q174 72 194 92 Q170 90 148 84 Z"/>
+    <path d="M100 70 Q78 72 60 92 Q82 90 104 84 Z"/>
+    <circle cx="124" cy="36" r="4.5"/>
+    <path d="M164 122 Q172 132 175 141" fill="none" stroke="#0B1F33" stroke-width="5"/>
+    <path d="M168 139 L186 139 L184 158 Q177 164 170 158 Z"/>
+    <path d="M146 206 Q162 188 174 176" fill="none" stroke="#0B1F33" stroke-width="18"/>
+    <ellipse cx="177" cy="170" rx="10" ry="11"/>
+    <path d="M166 226 Q192 200 206 176" fill="none" stroke="#0B1F33" stroke-width="20"/>
+    <ellipse cx="210" cy="168" rx="11" ry="14"/>
   </g>
-  <text x="320" y="140" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#FFFFFF">Req<tspan fill="#38BDF8">Lens</tspan></text>
-  <text x="324" y="194" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" fill="#C9D6E3">Requirements analysis for the automotive industry</text>
+  <line x1="213" y1="156" x2="221" y2="130" stroke="#0B1F33" stroke-width="7" stroke-linecap="round"/>
+  <g fill="none" stroke="#9FB3C8" stroke-width="2.5" stroke-linecap="round" opacity="0.6">
+    <path d="M178 134 Q172 122 180 112 Q188 102 182 90"/>
+    <path d="M186 132 Q182 120 190 110" opacity="0.6"/>
+  </g>
+  <circle cx="228" cy="104" r="24" fill="#38BDF8" fill-opacity="0.25"/>
+  <rect x="214" y="100" width="28" height="7" rx="3.5" fill="#F5A524"/>
+  <rect x="216" y="90" width="20" height="5" rx="2.5" fill="#9FB3C8" opacity="0.7"/>
+  <rect x="216" y="112" width="24" height="5" rx="2.5" fill="#9FB3C8" opacity="0.7"/>
+  <circle cx="228" cy="104" r="24" fill="none" stroke="#0B1F33" stroke-width="7"/>
+  <circle cx="228" cy="104" r="24" fill="none" stroke="#38BDF8" stroke-width="2" opacity="0.8"/>
+  <text x="300" y="140" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#FFFFFF">Req<tspan fill="#38BDF8">Lens</tspan></text>
+  <text x="304" y="194" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" fill="#C9D6E3">Requirements analysis for the automotive industry</text>
+  <g>
+    <path d="M1060 228 L1060 206 Q1062 196 1076 193 L1108 188 L1134 167 Q1141 161 1154 161 L1204 161 Q1216 161 1224 169 L1244 188 L1264 192 Q1277 195 1278 208 L1278 228 Z" fill="#13304D" stroke="#38BDF8" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M1120 188 L1140 171 Q1145 167 1154 167 L1176 167 L1176 188 Z" fill="#1E3A56"/>
+    <path d="M1184 167 L1204 167 Q1213 167 1219 173 L1234 188 L1184 188 Z" fill="#1E3A56"/>
+    <rect x="1266" y="200" width="12" height="7" rx="3" fill="#F4F7FA"/>
+    <circle cx="1102" cy="230" r="17" fill="#0B1F33" stroke="#C9D6E3" stroke-width="5"/>
+    <circle cx="1236" cy="230" r="17" fill="#0B1F33" stroke="#C9D6E3" stroke-width="5"/>
+    <g fill="none" stroke="#F5A524" stroke-width="4" stroke-linecap="round">
+      <path d="M1292 192 Q1302 206 1292 220"/>
+      <path d="M1306 182 Q1322 206 1306 230" opacity="0.7"/>
+      <path d="M1320 172 Q1342 206 1320 240" opacity="0.4"/>
+    </g>
+    <rect x="1346" y="196" width="26" height="50" rx="6" fill="#9FB3C8"/>
+    <rect x="1350" y="204" width="5" height="10" rx="2" fill="#E5484D"/>
+  </g>
 </svg>
