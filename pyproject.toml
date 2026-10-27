@@ -7,7 +7,9 @@ authors = [
     { name = "Berke Aksakal", email = "141648712+BUAksakal@users.noreply.github.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pydantic>=2.14.1",
+]
 
 [project.scripts]
 req-assistant = "req_assistant:main"
