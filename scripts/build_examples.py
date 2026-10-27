@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import yaml
@@ -17,9 +18,23 @@ from reportlab.platypus import (
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "examples" / "aeb_requirements.yaml"
 OUTPUT = ROOT / "examples" / "aeb_lastenheft.pdf"
+EVAL_DIR = ROOT / "eval"
 
 BRAND = colors.HexColor("#003366")
 STYLES = getSampleStyleSheet()
+
+
+class SpecDocTemplate(SimpleDocTemplate):
+    """Remembers the page on which each requirement heading is drawn."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.req_pages = {}
+
+    def afterFlowable(self, flowable):
+        req_id = getattr(flowable, "req_id", None)
+        if req_id:
+            self.req_pages[req_id] = self.page
 
 
 def load_spec(path: Path) -> dict:
@@ -76,7 +91,9 @@ def section(sec: dict) -> list:
     if "text" in sec:
         parts.append(Paragraph(sec["text"], STYLES["Normal"]))
     for req in sec.get("requirements", []):
-        parts.append(Paragraph(f"{req['id']} {req['title']}", STYLES["Heading3"]))
+        heading = Paragraph(f"{req['id']} {req['title']}", STYLES["Heading3"])
+        heading.req_id = req["id"]
+        parts.append(heading)
         parts.append(Paragraph(req["text"], STYLES["Normal"]))
     if "note" in sec:
         parts.append(Spacer(1, 6))
@@ -102,18 +119,52 @@ def header_footer(info: dict):
     return draw
 
 
-def build_pdf(spec: dict, output: Path) -> None:
+def build_pdf(spec: dict, output: Path) -> dict:
     info = spec["document"]
     story = cover_page(info) + revision_table(info["revisions"])
     for sec in spec["sections"]:
         story += section(sec)
 
-    doc = SimpleDocTemplate(
+    doc = SpecDocTemplate(
         str(output), pagesize=A4, topMargin=2.5 * cm, bottomMargin=2.5 * cm
     )
     doc.build(story, onFirstPage=lambda c, d: None, onLaterPages=header_footer(info))
+    return doc.req_pages
+
+
+def write_jsonl(path: Path, rows: list) -> None:
+    path.parent.mkdir(exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row) + "\n")
+
+
+def write_answer_keys(spec: dict, pages: dict) -> None:
+    extraction, errors = [], []
+    for sec in spec["sections"]:
+        for req in sec.get("requirements", []):
+            extraction.append(
+                {
+                    "id": req["id"],
+                    "text": req["text"],
+                    "source": OUTPUT.name,
+                    "page": pages[req["id"]],
+                }
+            )
+            if "error" in req:
+                errors.append(
+                    {
+                        "id": req["id"],
+                        "error": req["error"],
+                        "conflicts_with": req.get("conflicts_with"),
+                    }
+                )
+    write_jsonl(EVAL_DIR / "extraction_truth.jsonl", extraction)
+    write_jsonl(EVAL_DIR / "ground_truth.jsonl", errors)
 
 
 if __name__ == "__main__":
-    build_pdf(load_spec(SOURCE), OUTPUT)
-    print(f"Wrote {OUTPUT}")
+    spec = load_spec(SOURCE)
+    pages = build_pdf(spec, OUTPUT)
+    write_answer_keys(spec, pages)
+    print(f"Wrote {OUTPUT} and answer keys in {EVAL_DIR}")
