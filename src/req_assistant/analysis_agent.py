@@ -1,4 +1,5 @@
 import asyncio
+from collections.abc import Callable
 
 from llama_index.core.agent.workflow import FunctionAgent
 
@@ -10,13 +11,14 @@ SYSTEM_PROMPT = (
     "You review the requirements of a specification for conflicts. Two "
     "requirements conflict when they demand incompatible things, for example "
     "different values for the same parameter. Use find_related to look up "
-    "requirements on the same topic before you decide. Answer with the "
-    "conflicting requirement IDs and a one-sentence reason, or 'no conflict'."
+    "requirements on the same topic before you decide. Only report conflicts "
+    "that involve the requirement you were asked to check. Answer with the "
+    "conflicting requirement ID and a one-sentence reason, or 'no conflict'."
 )
 
 
-def check_conflicts(requirement_id: str, requirements: list[Requirement]) -> str:
-    """Ask the agent whether one requirement conflicts with any other."""
+def make_conflict_checker(requirements: list[Requirement]) -> Callable[[str], str]:
+    """Build the index once and return a function that checks one requirement."""
     by_id = {req.id: req for req in requirements}
     index = build_index(requirements)
 
@@ -28,9 +30,13 @@ def check_conflicts(requirement_id: str, requirements: list[Requirement]) -> str
     agent = FunctionAgent(
         tools=[find_related], llm=get_llm(), system_prompt=SYSTEM_PROMPT
     )
-    target = by_id[requirement_id]
 
-    async def run() -> str:
-        return str(await agent.run(f"Check {target.id}: {target.text}"))
+    def check(requirement_id: str) -> str:
+        target = by_id[requirement_id]
 
-    return asyncio.run(run())
+        async def run() -> str:
+            return str(await agent.run(f"Check {target.id}: {target.text}"))
+
+        return asyncio.run(run())
+
+    return check
