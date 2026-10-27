@@ -1,0 +1,6 @@
+{"id": "AEB-001", "text": "The AEB system shall be active at vehicle speeds between 10 km/h and 60 km/h.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-002", "text": "The AEB system shall not be active below 15 km/h.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-003", "text": "The system shall brake fast when a collision is imminent.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-004", "text": "The system shall warn the driver at least 0.8 s before emergency braking starts.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-005", "text": "The collision warning shall be acoustic and visual.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-006", "text": "The driver shall be able to interrupt emergency braking by pressing the accelerator pedal.", "source": "aeb_lastenheft.pdf", "page": 3}

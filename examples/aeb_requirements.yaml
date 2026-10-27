@@ -1,0 +1,62 @@
+document:
+  company: Musterwerk Automotive GmbH
+  title: "Lastenheft: Autonomous Emergency Braking (AEB)"
+  doc_id: LH-AEB-0001
+  version: "0.1"
+  date: "2026-10-27"
+  status: Draft
+  confidentiality: Internal
+  revisions:
+    - version: "0.1"
+      date: "2026-10-27"
+      author: B. Aksakal
+      change: Initial draft
+
+sections:
+  - number: "1"
+    title: Introduction
+    text: >
+      This document specifies the requirements for the Autonomous Emergency
+      Braking (AEB) system of passenger cars (category M1). It is intended for
+      suppliers responding to the request for quotation.
+
+  - number: "2"
+    title: Scope
+    text: >
+      The AEB system detects vehicles ahead and warns the driver. If the driver
+      does not react, the system brakes automatically to avoid or mitigate a
+      collision.
+
+  - number: "3"
+    title: Activation and Braking
+    requirements:
+      - id: AEB-001
+        title: Operating speed range
+        text: The AEB system shall be active at vehicle speeds between 10 km/h and 60 km/h.
+
+      - id: AEB-002
+        title: Minimum activation speed
+        text: The AEB system shall not be active below 15 km/h.
+        error: conflict
+        conflicts_with: AEB-001
+
+      - id: AEB-003
+        title: Braking reaction
+        text: The system shall brake fast when a collision is imminent.
+        error: vague
+    note: Speed values refer to the speed shown on the vehicle speedometer.
+
+  - number: "4"
+    title: Driver Warning and Interaction
+    requirements:
+      - id: AEB-004
+        title: Collision warning
+        text: The system shall warn the driver at least 0.8 s before emergency braking starts.
+
+      - id: AEB-005
+        title: Warning type
+        text: The collision warning shall be acoustic and visual.
+
+      - id: AEB-006
+        title: Driver override
+        text: The driver shall be able to interrupt emergency braking by pressing the accelerator pedal.
