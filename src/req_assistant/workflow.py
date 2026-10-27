@@ -1,7 +1,10 @@
 import re
 from typing import TypedDict
 
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 from langgraph.graph import END, START, StateGraph
+from langgraph.types import interrupt
 
 from req_assistant.ambiguity import find_vague_words
 from req_assistant.models import Requirement
@@ -13,6 +16,7 @@ class State(TypedDict, total=False):
     requirements: list[Requirement]
     vague: dict[str, list[str]]
     conflicts: dict[str, str]
+    approved: list[str]
     report: str
 
 
@@ -55,12 +59,17 @@ def check_conflicts(state: State) -> State:
     return {"conflicts": conflicts}
 
 
+def review(state: State) -> State:
+    findings = [f"{rid}: vague words {w}" for rid, w in state["vague"].items()]
+    findings += [f"{rid}: {reason}" for rid, reason in state["conflicts"].items()]
+    approved = interrupt(findings)
+    return {"approved": approved}
+
+
 def write_report(state: State) -> State:
     lines = [f"{len(state['requirements'])} requirements found."]
-    for req_id, words in state["vague"].items():
-        lines.append(f"{req_id}: vague words {words}")
-    for req_id, reason in state["conflicts"].items():
-        lines.append(f"{req_id}: {reason}")
+    lines += state["approved"]
+    lines.append(f"{len(state['approved'])} findings approved by the engineer.")
     return {"report": "\n".join(lines)}
 
 
@@ -70,12 +79,17 @@ def build_workflow():
     graph.add_node("ai_extract", ai_extract)
     graph.add_node("check_vague", check_vague)
     graph.add_node("check_conflicts", check_conflicts)
+    graph.add_node("review", review)
     graph.add_node("write_report", write_report)
 
     graph.add_edge(START, "classic_extract")
     graph.add_conditional_edges("classic_extract", choose_extractor)
     graph.add_edge("ai_extract", "check_vague")
     graph.add_edge("check_vague", "check_conflicts")
-    graph.add_edge("check_conflicts", "write_report")
+    graph.add_edge("check_conflicts", "review")
+    graph.add_edge("review", "write_report")
     graph.add_edge("write_report", END)
-    return graph.compile()
+    serde = JsonPlusSerializer(
+        allowed_msgpack_modules=[("req_assistant.models", "Requirement")]
+    )
+    return graph.compile(checkpointer=InMemorySaver(serde=serde))
