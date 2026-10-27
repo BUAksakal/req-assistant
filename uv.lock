@@ -1014,6 +1014,19 @@ wheels = [
 ]
 
 [[package]]
+name = "llama-index-embeddings-google-genai"
+version = "0.6.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "google-genai" },
+    { name = "llama-index-core" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/89/20/d614eaf53e5b2402c681f2805016fab127130ec4efd7625d8903e5cdb964/llama_index_embeddings_google_genai-0.6.0.tar.gz", hash = "sha256:e1b74c3b82ab7ba68bb7ac698345a1f383657987d1c8bc1f4c93c11e4c7ee59c", size = 5955, upload-time = "2026-08-29T15:35:31.668Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ce/5d/6cca75db5ed50ba0017d0a3315063e63e0973e67e9f70e0dd5775fe749ed/llama_index_embeddings_google_genai-0.6.0-py3-none-any.whl", hash = "sha256:20f50c92b66ef1353e77d0dd9516f248ea9bd49520858582c21e8a8d37e68c24", size = 5724, upload-time = "2026-08-29T15:35:30.898Z" },
+]
+
+[[package]]
 name = "llama-index-instrumentation"
 version = "0.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2171,6 +2184,7 @@ name = "req-assistant"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "llama-index-embeddings-google-genai" },
     { name = "llama-index-llms-google-genai" },
     { name = "pydantic" },
     { name = "pymupdf" },
@@ -2189,6 +2203,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "llama-index-embeddings-google-genai", specifier = ">=0.6.0" },
     { name = "llama-index-llms-google-genai", specifier = ">=0.11.3" },
     { name = "pydantic", specifier = ">=2.14.1" },
     { name = "pymupdf", specifier = ">=2.0" },
