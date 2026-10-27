@@ -1,6 +1,18 @@
 {"id": "AEB-001", "text": "The AEB system shall be active at vehicle speeds between 10 km/h and 60 km/h.", "source": "aeb_lastenheft.pdf", "page": 3}
 {"id": "AEB-002", "text": "The AEB system shall not be active below 15 km/h.", "source": "aeb_lastenheft.pdf", "page": 3}
 {"id": "AEB-003", "text": "The system shall brake fast when a collision is imminent.", "source": "aeb_lastenheft.pdf", "page": 3}
-{"id": "AEB-004", "text": "The system shall warn the driver at least 0.8 s before emergency braking starts.", "source": "aeb_lastenheft.pdf", "page": 3}
-{"id": "AEB-005", "text": "The collision warning shall be acoustic and visual.", "source": "aeb_lastenheft.pdf", "page": 3}
-{"id": "AEB-006", "text": "The driver shall be able to interrupt emergency braking by pressing the accelerator pedal.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-004", "text": "In the stationary target test scenario, the emergency braking phase shall reduce the vehicle speed by at least 20 km/h before the estimated point of impact, measured from the start of the emergency braking phase.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-005", "text": "The emergency braking phase shall not start earlier than 3.0 s before the estimated time to collision.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-006", "text": "The system shall work reliably in all weather conditions.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-007", "text": "The system shall warn the driver at least 0.8 s before emergency braking starts.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-008", "text": "The collision warning shall be acoustic and visual.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-009", "text": "The driver shall be able to interrupt emergency braking by pressing the accelerator pedal.", "source": "aeb_lastenheft.pdf", "page": 3}
+{"id": "AEB-010", "text": "The collision warning shall be clearly perceptible to the driver.", "source": "aeb_lastenheft.pdf", "page": 4}
+{"id": "AEB-011", "text": "The system shall be automatically reactivated at the start of each engine start cycle.", "source": "aeb_lastenheft.pdf", "page": 4}
+{"id": "AEB-012", "text": "Manual deactivation of the system shall require at least two deliberate actions by the driver, such as selecting a menu entry and confirming the selection, so that the system cannot be switched off by a single accidental button press.", "source": "aeb_lastenheft.pdf", "page": 4}
+{"id": "AEB-013", "text": "When the system is deactivated, a constant optical warning signal shall be shown to the driver.", "source": "aeb_lastenheft.pdf", "page": 4}
+{"id": "AEB-014", "text": "A failure warning signal shall be displayed within 10 s after a system failure is detected.", "source": "aeb_lastenheft.pdf", "page": 4}
+{"id": "AEB-015", "text": "The system shall store a diagnostic trouble code for each detected sensor fault.", "source": "aeb_lastenheft.pdf", "page": 4}
+{"id": "AEB-016", "text": "The system shall avoid false braking interventions as far as possible.", "source": "aeb_lastenheft.pdf", "page": 4}
+{"id": "AEB-017", "text": "The radar sensor shall detect vehicles ahead at a distance of at least 150 m.", "source": "aeb_lastenheft.pdf", "page": 4}
+{"id": "AEB-018", "text": "The failure warning signal shall be displayed within 5 s after a system failure is detected.", "source": "aeb_lastenheft.pdf", "page": 4}

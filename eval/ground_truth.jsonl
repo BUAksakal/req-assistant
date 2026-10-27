@@ -1,2 +1,6 @@
 {"id": "AEB-002", "error": "conflict", "conflicts_with": "AEB-001"}
 {"id": "AEB-003", "error": "vague", "conflicts_with": null}
+{"id": "AEB-006", "error": "untestable", "conflicts_with": null}
+{"id": "AEB-010", "error": "vague", "conflicts_with": null}
+{"id": "AEB-016", "error": "vague", "conflicts_with": null}
+{"id": "AEB-018", "error": "conflict", "conflicts_with": "AEB-014"}
