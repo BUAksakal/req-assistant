@@ -3,9 +3,9 @@ from collections.abc import Callable
 
 from llama_index.core.agent.workflow import FunctionAgent
 
-from req_assistant.llm import get_llm
-from req_assistant.models import Requirement
-from req_assistant.requirement_index import build_index, search
+from reqlens.llm import get_llm
+from reqlens.models import Requirement
+from reqlens.requirement_index import build_index, search
 
 SYSTEM_PROMPT = (
     "You review the requirements of a specification for conflicts. Two "

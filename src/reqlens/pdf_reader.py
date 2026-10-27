@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pymupdf
 
-from req_assistant.models import Requirement
+from reqlens.models import Requirement
 
 REQ_ID = re.compile(r"^AEB-\d{3}\b")
 SECTION_HEADING = re.compile(r"^\d+ [A-Z]")

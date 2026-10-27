@@ -3,9 +3,9 @@ from pathlib import Path
 from llama_index.core.prompts import PromptTemplate
 from pydantic import BaseModel
 
-from req_assistant.llm import get_llm
-from req_assistant.models import Requirement
-from req_assistant.pdf_reader import read_pages
+from reqlens.llm import get_llm
+from reqlens.models import Requirement
+from reqlens.pdf_reader import read_pages
 
 PROMPT = PromptTemplate(
     "Below is the text of a specification document. Each page starts with a\n"

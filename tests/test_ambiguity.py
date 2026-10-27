@@ -1,4 +1,4 @@
-from req_assistant.ambiguity import find_vague_words
+from reqlens.ambiguity import find_vague_words
 
 
 def test_finds_vague_word():

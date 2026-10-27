@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from req_assistant.pdf_reader import extract_requirements
+from reqlens.pdf_reader import extract_requirements
 
 ROOT = Path(__file__).resolve().parent.parent
 PDF = ROOT / "examples" / "aeb_lastenheft.pdf"

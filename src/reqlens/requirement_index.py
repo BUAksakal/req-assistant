@@ -1,8 +1,8 @@
 from llama_index.core import VectorStoreIndex
 from llama_index.core.schema import TextNode
 
-from req_assistant.llm import get_embed_model
-from req_assistant.models import Requirement
+from reqlens.llm import get_embed_model
+from reqlens.models import Requirement
 
 
 def build_index(requirements: list[Requirement]) -> VectorStoreIndex:
