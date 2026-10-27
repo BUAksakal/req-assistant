@@ -7,33 +7,61 @@
     <line x1="0" y1="250" x2="1400" y2="250"/>
     <line x1="0" y1="270" x2="1400" y2="270" stroke-dasharray="40 30"/>
   </g>
-  <circle cx="140" cy="140" r="112" fill="#E8DCC0"/>
-  <g clip-path="url(#spot)" fill="#0B1F33" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M28 270 Q32 192 80 168 Q100 158 120 160 Q150 162 170 178 Q188 196 194 270 Z"/>
-    <path d="M82 170 Q68 142 90 122 Q96 146 114 162 Z"/>
-    <path d="M100 80 L158 80 Q160 86 163 92 Q166 100 173 107 Q168 111 165 112 Q168 116 166 119 Q163 121 165 124 Q166 130 161 136 Q152 145 138 148 L134 164 L108 164 Q100 142 98 118 Q96 96 100 80 Z"/>
-    <path d="M88 86 L88 78 Q90 42 124 38 Q156 40 160 76 L160 86 Z"/>
-    <path d="M150 70 Q174 72 194 92 Q170 90 148 84 Z"/>
-    <path d="M100 70 Q78 72 60 92 Q82 90 104 84 Z"/>
-    <circle cx="124" cy="36" r="4.5"/>
-    <path d="M164 122 Q172 132 175 141" fill="none" stroke="#0B1F33" stroke-width="5"/>
-    <path d="M168 139 L186 139 L184 158 Q177 164 170 158 Z"/>
-    <path d="M146 206 Q162 188 174 176" fill="none" stroke="#0B1F33" stroke-width="18"/>
-    <ellipse cx="177" cy="170" rx="10" ry="11"/>
-    <path d="M166 226 Q192 200 206 176" fill="none" stroke="#0B1F33" stroke-width="20"/>
-    <ellipse cx="210" cy="168" rx="11" ry="14"/>
+  <circle cx="140" cy="140" r="112" fill="#A69FB8"/>
+  <g clip-path="url(#spot)" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="140" cy="140" r="96" fill="#B9B3C9"/>
+    <path d="M44 120 C46 70 90 34 142 32" fill="none" stroke="#0B1F33" stroke-width="9"/>
+    <path d="M236 168 C228 214 192 240 150 248" fill="none" stroke="#0B1F33" stroke-width="7"/>
+    <path d="M48 270 L68 206 Q86 182 126 176 L150 172 Q190 176 214 196 L238 270 Z" fill="#0B1F33"/>
+    <path d="M206 192 Q218 206 224 226" fill="none" stroke="#5B6B7D" stroke-width="3"/>
+    <path d="M134 176 L150 230 L168 174 Z" fill="#F4F7FA"/>
+    <path d="M150 230 L156 214 L160 230 Z" fill="#C9D6E3"/>
+    <path d="M128 178 L148 226 L110 200 Z" fill="#0B1F33" stroke="#3B4A5C" stroke-width="2"/>
+    <path d="M172 176 L152 226 L192 198 Z" fill="#0B1F33" stroke="#3B4A5C" stroke-width="2"/>
+    <path d="M142 182 L152 188 L162 182 L163 194 L152 188 L141 194 Z" fill="#0B1F33"/>
+    <path d="M140 148 L162 148 L166 178 L136 178 Z" fill="#D9845F"/>
+    <path d="M152 148 L162 148 L166 178 L156 170 Z" fill="#C9764F"/>
+    <ellipse cx="168" cy="112" rx="6" ry="10" fill="#E8956E"/>
+    <path d="M168 106 Q171 112 167 118" fill="none" stroke="#0B1F33" stroke-width="2"/>
+    <path d="M120 76 C130 64 156 62 168 74 C176 84 176 100 172 112 C170 128 164 142 152 148 C144 152 134 152 126 148 C120 144 118 138 118 132 L114 128 L117 124 C114 120 112 118 116 114 L108 110 C110 104 114 100 116 96 C116 88 116 82 120 76 Z" fill="#E8956E"/>
+    <path d="M156 96 C163 102 166 108 166 118 C164 130 160 140 152 146 C155 134 155 120 152 110 C151 104 153 100 156 96 Z" fill="#D9845F"/>
+    <path d="M116 114 L108 110 L114 118 Z" fill="#C9764F"/>
+    <path d="M116 90 C112 72 124 58 144 56 C160 55 174 64 176 80 C177 88 175 96 172 104 C170 92 166 84 158 80 C148 76 136 78 128 82 C122 85 118 88 116 90 Z" fill="#3A2E28"/>
+    <path d="M118 86 C124 72 138 64 156 64" fill="none" stroke="#6B5646" stroke-width="3"/>
+    <path d="M128 80 C134 70 148 66 162 70" fill="none" stroke="#6B5646" stroke-width="2"/>
+    <line x1="156" y1="98" x2="165" y2="104" stroke="#0B1F33" stroke-width="3"/>
+    <line x1="114" y1="96" x2="158" y2="96" stroke="#0B1F33" stroke-width="2.5"/>
+    <path d="M115 96 L130 96 L129 105 Q123 109 117 105 Z" fill="#0B1F33"/>
+    <path d="M136 96 L157 96 L155 106 Q146 111 138 106 Z" fill="#0B1F33"/>
+    <line x1="130" y1="98" x2="136" y2="98" stroke="#0B1F33" stroke-width="2.5"/>
+    <path d="M118 99 L122 99" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M140 99 L147 99" stroke="#FFFFFF" stroke-width="2.5"/>
+    <path d="M118 135 L130 134" fill="none" stroke="#0B1F33" stroke-width="2.5"/>
+    <g transform="rotate(-12 214 160)">
+      <rect x="186" y="112" width="58" height="78" rx="5" fill="#DCE4EC"/>
+      <rect x="195" y="124" width="38" height="4" rx="2" fill="#9FB3C8"/>
+      <rect x="195" y="134" width="30" height="4" rx="2" fill="#9FB3C8"/>
+    </g>
+    <g transform="rotate(5 212 160)">
+      <rect x="184" y="116" width="58" height="78" rx="5" fill="#F4F7FA"/>
+      <rect x="193" y="128" width="40" height="4" rx="2" fill="#9FB3C8"/>
+      <rect x="193" y="168" width="34" height="4" rx="2" fill="#9FB3C8"/>
+      <rect x="193" y="178" width="26" height="4" rx="2" fill="#9FB3C8"/>
+    </g>
+    <path d="M232 268 Q206 240 186 218" fill="none" stroke="#0B1F33" stroke-width="22"/>
+    <rect x="180" y="210" width="16" height="8" rx="2" fill="#F4F7FA" transform="rotate(48 188 214)"/>
+    <ellipse cx="180" cy="206" rx="12" ry="11" fill="#E8956E"/>
+    <path d="M170 204 Q176 196 186 200" fill="none" stroke="#0B1F33" stroke-width="2"/>
   </g>
-  <line x1="213" y1="156" x2="221" y2="130" stroke="#0B1F33" stroke-width="7" stroke-linecap="round"/>
-  <g fill="none" stroke="#9FB3C8" stroke-width="2.5" stroke-linecap="round" opacity="0.6">
-    <path d="M178 134 Q172 122 180 112 Q188 102 182 90"/>
-    <path d="M186 132 Q182 120 190 110" opacity="0.6"/>
-  </g>
-  <circle cx="228" cy="104" r="24" fill="#38BDF8" fill-opacity="0.25"/>
-  <rect x="214" y="100" width="28" height="7" rx="3.5" fill="#F5A524"/>
-  <rect x="216" y="90" width="20" height="5" rx="2.5" fill="#9FB3C8" opacity="0.7"/>
-  <rect x="216" y="112" width="24" height="5" rx="2.5" fill="#9FB3C8" opacity="0.7"/>
-  <circle cx="228" cy="104" r="24" fill="none" stroke="#0B1F33" stroke-width="7"/>
-  <circle cx="228" cy="104" r="24" fill="none" stroke="#38BDF8" stroke-width="2" opacity="0.8"/>
+  <text x="64" y="90" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" font-style="italic" fill="#0B1F33" letter-spacing="-1">001</text>
+  <text x="65" y="104" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#0B1F33" letter-spacing="1.5">B.U.A.</text>
+  <line x1="184" y1="196" x2="196" y2="174" stroke="#0B1F33" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="206" cy="152" r="24" fill="#38BDF8" fill-opacity="0.3"/>
+  <rect x="192" y="148" width="28" height="7" rx="3.5" fill="#F5A524"/>
+  <rect x="194" y="138" width="20" height="5" rx="2.5" fill="#9FB3C8" opacity="0.8"/>
+  <rect x="194" y="160" width="24" height="5" rx="2.5" fill="#9FB3C8" opacity="0.8"/>
+  <circle cx="206" cy="152" r="24" fill="none" stroke="#0B1F33" stroke-width="7"/>
+  <circle cx="206" cy="152" r="24" fill="none" stroke="#38BDF8" stroke-width="2" opacity="0.8"/>
   <text x="300" y="140" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#FFFFFF">Req<tspan fill="#38BDF8">Lens</tspan></text>
   <text x="304" y="194" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" fill="#C9D6E3">Requirements analysis for the automotive industry</text>
   <g>
