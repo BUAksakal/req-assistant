@@ -3,7 +3,7 @@ from llama_index.llms.google_genai import GoogleGenAI
 
 load_dotenv()
 
-MODEL = "gemini-3.5-flash"
+MODEL = "gemini-2.5-flash"
 
 
 def get_llm() -> GoogleGenAI:
