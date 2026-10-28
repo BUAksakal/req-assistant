@@ -248,6 +248,13 @@ Being honest about what does not work yet:
 
 ## Roadmap
 
+<p align="center">
+  <img src="docs/assets/reqlens-voyage.svg" alt="ReqLens roadmap as a treasure map: a ship with the 001 agent and a PDF sails past eight finished islands towards an X that marks what comes next" width="100%">
+</p>
+
+<details>
+<summary><b>Roadmap as a list</b></summary>
+
 - [x] Classic and LLM extraction
 - [x] LlamaIndex conflict agent with semantic search
 - [x] LangGraph workflow with engineer review
@@ -261,6 +268,8 @@ Being honest about what does not work yet:
 - [ ] Check each requirement pair only once
 - [ ] LLM-based ambiguity check
 - [ ] Deployment on AWS
+
+</details>
 
 ---
 
