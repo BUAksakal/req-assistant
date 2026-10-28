@@ -27,25 +27,9 @@ These problems are usually written by different teams, end up 40 pages apart and
 
 ## How it works
 
-```mermaid
-flowchart LR
-    PDF([📄 PDF specification]) --> A
-
-    subgraph LG [LangGraph workflow]
-        direction LR
-        A[Classic extraction<br/>PyMuPDF + regex] -->|0 found| B[LLM extraction<br/>Gemini, structured output]
-        A -->|found| C
-        B --> C[Ambiguity check<br/>vague word rules]
-        C --> D
-
-        subgraph LI [LlamaIndex agent]
-            D[Conflict check<br/>Gemini decides] <-->|find_related| E[(Semantic index<br/>embeddings)]
-        end
-
-        D --> F{{⏸ Engineer review<br/>approve / reject}}
-        F --> G[Report]
-    end
-```
+<p align="center">
+  <img src="docs/assets/workflow.svg" alt="ReqLens workflow: PDF, classic extraction, LLM fallback, vague check, LlamaIndex conflict agent with semantic index, engineer review, report" width="100%">
+</p>
 
 | Step | What happens | Why this way |
 |---|---|---|
@@ -91,6 +75,8 @@ echo "GEMINI_API_KEY=your-key" > .env   # free key: https://aistudio.google.com/
 uv run reqlens parse examples/aeb_lastenheft.pdf          # classic extraction
 uv run reqlens parse path/to/spec.pdf --ai                # LLM extraction
 uv run reqlens analyze examples/aeb_lastenheft.pdf        # full workflow with review
+uv run reqlens history                                    # past runs and approval rate
+uv run streamlit run app.py                               # web interface
 ```
 
 <details>

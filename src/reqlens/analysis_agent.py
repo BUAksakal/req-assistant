@@ -19,14 +19,21 @@ SYSTEM_PROMPT = (
 
 def make_conflict_checker(
     requirements: list[Requirement],
+    on_search: Callable[[str, list[str]], None] | None = None,
 ) -> Callable[[str, str], str]:
-    """Build the index once and return a function that checks one requirement."""
+    """Build the index once and return a function that checks one requirement.
+
+    on_search is called with every query the agent sends to find_related and the
+    IDs it got back, so a UI can show what the agent is doing.
+    """
     by_id = {req.id: req for req in requirements}
     index = build_index(requirements)
 
     def find_related(query: str) -> str:
         """Find the requirements most similar to the query, with their text."""
         hits = search(index, query, top_k=4)
+        if on_search:
+            on_search(query, [rid for rid, _ in hits])
         return "\n".join(f"{rid}: {by_id[rid].text}" for rid, _ in hits)
 
     def check(requirement_id: str, model: str) -> str:

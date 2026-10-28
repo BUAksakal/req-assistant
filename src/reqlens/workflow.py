@@ -4,6 +4,7 @@ from typing import TypedDict
 
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import interrupt
 
@@ -50,11 +51,16 @@ def check_conflicts(state: State) -> State:
     from reqlens.analysis_agent import make_conflict_checker
     from reqlens.llm import call_with_fallback
 
-    check = make_conflict_checker(state["requirements"])
+    progress = get_stream_writer()
+    check = make_conflict_checker(
+        state["requirements"],
+        on_search=lambda query, hits: progress({"search": query, "hits": hits}),
+    )
     conflicts = {}
     for req in state["requirements"]:
         if not re.search(r"\d", req.text):
             continue
+        progress({"checking": req.id})
         answer = call_with_fallback(partial(check, req.id))
         if "no conflict" not in answer.lower():
             conflicts[req.id] = answer
