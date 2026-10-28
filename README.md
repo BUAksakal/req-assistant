@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <a href="https://guhlixj93lndfluucdkk35.streamlit.app/"><b>▶ Try the live demo</b></a> · upload any text-based specification PDF (max. 60 pages)
+  <a href="https://reqlens.streamlit.app/"><b>▶ Try the live demo</b></a> · upload any text-based specification PDF (max. 60 pages)
 </p>
 
 ---
