@@ -7,12 +7,19 @@ from llama_index.core.prompts import PromptTemplate
 from pydantic import BaseModel
 
 from reqlens.cache import fingerprint, lookup, store
-from reqlens.llm import call_with_fallback, get_llm
+from reqlens.llm import LLMUnavailableError, call_with_fallback, get_llm
 from reqlens.models import Requirement
 from reqlens.pdf_reader import read_pages
 from reqlens.storage import DB_PATH
 
 CHUNK_PAGES = 8
+# 60 pages are 9 chunks, so one document can never use up the free daily quota.
+MAX_PAGES = 60
+
+
+class DocumentTooLargeError(LLMUnavailableError):
+    """The document has too many pages to send to the LLM."""
+
 
 PROMPT = PromptTemplate(
     "Below are some pages of a specification document. Each page starts with a\n"
@@ -90,8 +97,14 @@ def extract_with_cache(
     overlapping chunks, the longer text wins.
     """
     path = Path(path)
+    all_pages = read_pages(path)
+    if len(all_pages) > MAX_PAGES:
+        raise DocumentTooLargeError(
+            f"{path.name} has {len(all_pages)} pages. The LLM reads at most "
+            f"{MAX_PAGES} pages per document, please split it."
+        )
     found: dict[str, Requirement] = {}
-    for first, pages in page_chunks(read_pages(path)):
+    for first, pages in page_chunks(all_pages):
         if on_chunk:
             on_chunk(first, first + len(pages) - 1)
         # The prompt is part of the key: new instructions must not reuse old answers.
