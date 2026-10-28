@@ -387,7 +387,7 @@ def show_review() -> None:
         with st.container(border=True):
             cols = st.columns(widths, vertical_alignment="center")
             cols[0].markdown(
-                f'<div class="rl-id">{req_id}</div>'
+                f'<div class="rl-id">{html.escape(req_id)}</div>'
                 f'<span class="rl-chip {chip}">{kind}</span>',
                 unsafe_allow_html=True,
             )
