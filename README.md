@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/reqlens-banner.svg" alt="ReqLens: requirements analysis for the automotive industry" width="100%">
+  <img src="docs/assets/reqlens-header.svg" alt="ReqLens: AI agents that review automotive requirements" width="100%">
 </p>
 
 <p align="center">
