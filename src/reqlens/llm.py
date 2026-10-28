@@ -8,26 +8,46 @@ from llama_index.llms.google_genai import GoogleGenAI
 
 load_dotenv()
 
-MODEL = "gemini-3.1-flash-lite"
+MODELS = ["gemini-3.1-flash-lite", "gemini-2.5-flash"]
 EMBED_MODEL = "gemini-embedding-001"
 RETRY_CODES = {429, 503}
 
 
-def get_llm() -> GoogleGenAI:
-    return GoogleGenAI(model=MODEL)
+class LLMUnavailableError(RuntimeError):
+    """Every model was busy or out of quota."""
+
+
+def get_llm(model: str = MODELS[0]) -> GoogleGenAI:
+    return GoogleGenAI(model=model)
 
 
 def get_embed_model() -> GoogleGenAIEmbedding:
     return GoogleGenAIEmbedding(model_name=EMBED_MODEL)
 
 
-def call_with_retry[T](fn: Callable[..., T], *args, attempts: int = 4) -> T:
-    """Call fn again after a pause when the LLM is busy (503) or rate limited (429)."""
-    for attempt in range(1, attempts + 1):
-        try:
-            return fn(*args)
-        except (errors.ClientError, errors.ServerError) as error:
-            if error.code not in RETRY_CODES or attempt == attempts:
-                raise
-            print(f"LLM busy ({error.code}), retrying in {15 * attempt} s...")
-            time.sleep(15 * attempt)
+_last_working = 0
+
+
+def call_with_fallback[T](fn: Callable[[str], T], attempts: int = 2) -> T:
+    """Call fn(model) and switch to the next model when one is busy (503/429).
+
+    Starts with the model that answered last time, so a busy model is not
+    retried for every single call.
+    """
+    global _last_working
+    order = list(range(_last_working, len(MODELS))) + list(range(_last_working))
+    for index in order:
+        model = MODELS[index]
+        for attempt in range(1, attempts + 1):
+            try:
+                result = fn(model)
+                _last_working = index
+                return result
+            except (errors.ClientError, errors.ServerError) as error:
+                if error.code not in RETRY_CODES:
+                    raise
+                print(f"{model} busy ({error.code}), attempt {attempt}/{attempts}")
+                time.sleep(10)
+    raise LLMUnavailableError(
+        "All Gemini models are busy right now. Please try again in a few minutes."
+    )

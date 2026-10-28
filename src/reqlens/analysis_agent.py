@@ -17,7 +17,9 @@ SYSTEM_PROMPT = (
 )
 
 
-def make_conflict_checker(requirements: list[Requirement]) -> Callable[[str], str]:
+def make_conflict_checker(
+    requirements: list[Requirement],
+) -> Callable[[str, str], str]:
     """Build the index once and return a function that checks one requirement."""
     by_id = {req.id: req for req in requirements}
     index = build_index(requirements)
@@ -27,11 +29,10 @@ def make_conflict_checker(requirements: list[Requirement]) -> Callable[[str], st
         hits = search(index, query, top_k=4)
         return "\n".join(f"{rid}: {by_id[rid].text}" for rid, _ in hits)
 
-    agent = FunctionAgent(
-        tools=[find_related], llm=get_llm(), system_prompt=SYSTEM_PROMPT
-    )
-
-    def check(requirement_id: str) -> str:
+    def check(requirement_id: str, model: str) -> str:
+        agent = FunctionAgent(
+            tools=[find_related], llm=get_llm(model), system_prompt=SYSTEM_PROMPT
+        )
         target = by_id[requirement_id]
 
         async def run() -> str:

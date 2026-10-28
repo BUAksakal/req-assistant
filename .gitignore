@@ -4,3 +4,4 @@ __pycache__/
 data/
 proje.md
 .DS_Store
+reqlens.db

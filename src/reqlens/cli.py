@@ -4,6 +4,7 @@ from typing import Annotated
 import typer
 
 from reqlens.pdf_reader import extract_requirements
+from reqlens.storage import connect, save_run
 
 app = typer.Typer(help="ReqLens: requirements analysis for the automotive industry.")
 
@@ -37,14 +38,40 @@ def analyze(
     """Run the full workflow and let the engineer approve each finding."""
     from langgraph.types import Command
 
+    from reqlens.llm import LLMUnavailableError
     from reqlens.workflow import build_workflow
 
     workflow = build_workflow()
     config = {"configurable": {"thread_id": pdf.name}}
-    result = workflow.invoke({"pdf": str(pdf)}, config)
+    try:
+        result = workflow.invoke({"pdf": str(pdf)}, config)
+    except LLMUnavailableError as error:
+        typer.echo(f"\n{error}")
+        raise typer.Exit(1)
 
     findings = result["__interrupt__"][0].value
     approved = [f for f in findings if typer.confirm(f"\n{f}\nReal problem?")]
 
     result = workflow.invoke(Command(resume=approved), config)
     typer.echo("\n" + result["report"])
+
+    run_id = save_run(
+        connect(), pdf.name, len(result["requirements"]), findings, approved
+    )
+    typer.echo(f"Saved as run #{run_id} in reqlens.db")
+
+
+@app.command()
+def history(
+    db: Annotated[Path, typer.Option(help="Database file.")] = Path("reqlens.db"),
+) -> None:
+    """Show past analyses and how many findings engineers approved."""
+    from reqlens.storage import approval_rate, connect, list_runs
+
+    conn = connect(db)
+    for run_id, created, pdf_name, reqs, total, approved in list_runs(conn):
+        typer.echo(
+            f"#{run_id}  {created}  {pdf_name}  {reqs} requirements  "
+            f"{approved}/{total} findings approved"
+        )
+    typer.echo(f"\nOverall approval rate: {approval_rate(conn):.0%}")

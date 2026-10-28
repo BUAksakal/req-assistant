@@ -1,4 +1,5 @@
 import re
+from functools import partial
 from typing import TypedDict
 
 from langgraph.checkpoint.memory import InMemorySaver
@@ -26,9 +27,10 @@ def classic_extract(state: State) -> State:
 
 def ai_extract(state: State) -> State:
     from reqlens.ai_parser import extract_requirements_ai
-    from reqlens.llm import call_with_retry
+    from reqlens.llm import call_with_fallback
 
-    return {"requirements": call_with_retry(extract_requirements_ai, state["pdf"])}
+    pdf = state["pdf"]
+    return {"requirements": call_with_fallback(partial(extract_requirements_ai, pdf))}
 
 
 def choose_extractor(state: State) -> str:
@@ -46,14 +48,14 @@ def check_vague(state: State) -> State:
 
 def check_conflicts(state: State) -> State:
     from reqlens.analysis_agent import make_conflict_checker
-    from reqlens.llm import call_with_retry
+    from reqlens.llm import call_with_fallback
 
     check = make_conflict_checker(state["requirements"])
     conflicts = {}
     for req in state["requirements"]:
         if not re.search(r"\d", req.text):
             continue
-        answer = call_with_retry(check, req.id)
+        answer = call_with_fallback(partial(check, req.id))
         if "no conflict" not in answer.lower():
             conflicts[req.id] = answer
     return {"conflicts": conflicts}
