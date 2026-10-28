@@ -1,82 +1,95 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="300" viewBox="0 0 1400 300" role="img" aria-label="ReqLens: requirements analysis for the automotive industry">
   <defs>
-    <clipPath id="spot"><circle cx="140" cy="140" r="112"/></clipPath>
+    <clipPath id="spot"><circle cx="140" cy="150" r="112"/></clipPath>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M1 1 L9 5 L1 9" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
   </defs>
   <rect x="1" y="1" width="1398" height="298" rx="24" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
-  <g fill="none" stroke="#E5E5E5" stroke-width="2">
-    <line x1="0" y1="250" x2="1400" y2="250"/>
-    <line x1="0" y1="270" x2="1400" y2="270" stroke-dasharray="40 30"/>
-  </g>
-  <circle cx="140" cy="140" r="112" fill="#E5E5E5"/>
+
+  <circle cx="140" cy="150" r="112" fill="#F4F4F4"/>
   <g clip-path="url(#spot)" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="140" cy="140" r="96" fill="#F3F3F3"/>
-    <path d="M44 120 C46 70 90 34 142 32" fill="none" stroke="#111111" stroke-width="9"/>
-    <path d="M236 168 C228 214 192 240 150 248" fill="none" stroke="#111111" stroke-width="7"/>
-    <path d="M48 270 L68 206 Q86 182 126 176 L150 172 Q190 176 214 196 L238 270 Z" fill="#111111"/>
-    <path d="M206 192 Q218 206 224 226" fill="none" stroke="#737373" stroke-width="3"/>
-    <path d="M134 176 L150 230 L168 174 Z" fill="#FFFFFF"/>
-    <path d="M150 230 L156 214 L160 230 Z" fill="#D4D4D4"/>
-    <path d="M128 178 L148 226 L110 200 Z" fill="#111111" stroke="#404040" stroke-width="2"/>
-    <path d="M172 176 L152 226 L192 198 Z" fill="#111111" stroke="#404040" stroke-width="2"/>
-    <path d="M142 182 L152 188 L162 182 L163 194 L152 188 L141 194 Z" fill="#111111"/>
-    <path d="M140 148 L162 148 L166 178 L136 178 Z" fill="#C4C4C4"/>
-    <path d="M152 148 L162 148 L166 178 L156 170 Z" fill="#B0B0B0"/>
-    <ellipse cx="168" cy="112" rx="6" ry="10" fill="#D9D9D9"/>
-    <path d="M168 106 Q171 112 167 118" fill="none" stroke="#111111" stroke-width="2"/>
-    <path d="M120 76 C130 64 156 62 168 74 C176 84 176 100 172 112 C170 128 164 142 152 148 C144 152 134 152 126 148 C120 144 118 138 118 132 L114 128 L117 124 C114 120 112 118 116 114 L108 110 C110 104 114 100 116 96 C116 88 116 82 120 76 Z" fill="#D9D9D9"/>
-    <path d="M156 96 C163 102 166 108 166 118 C164 130 160 140 152 146 C155 134 155 120 152 110 C151 104 153 100 156 96 Z" fill="#C4C4C4"/>
-    <path d="M116 114 L108 110 L114 118 Z" fill="#B0B0B0"/>
-    <path d="M116 90 C112 72 124 58 144 56 C160 55 174 64 176 80 C177 88 175 96 172 104 C170 92 166 84 158 80 C148 76 136 78 128 82 C122 85 118 88 116 90 Z" fill="#262626"/>
-    <path d="M118 86 C124 72 138 64 156 64" fill="none" stroke="#525252" stroke-width="3"/>
-    <path d="M128 80 C134 70 148 66 162 70" fill="none" stroke="#525252" stroke-width="2"/>
-    <line x1="156" y1="98" x2="165" y2="104" stroke="#111111" stroke-width="3"/>
-    <line x1="114" y1="96" x2="158" y2="96" stroke="#111111" stroke-width="2.5"/>
-    <path d="M115 96 L130 96 L129 105 Q123 109 117 105 Z" fill="#111111"/>
-    <path d="M136 96 L157 96 L155 106 Q146 111 138 106 Z" fill="#111111"/>
-    <line x1="130" y1="98" x2="136" y2="98" stroke="#111111" stroke-width="2.5"/>
-    <path d="M118 99 L122 99" stroke="#FFFFFF" stroke-width="2"/>
-    <path d="M140 99 L147 99" stroke="#FFFFFF" stroke-width="2.5"/>
-    <path d="M118 135 L130 134" fill="none" stroke="#111111" stroke-width="2.5"/>
-    <g transform="rotate(-12 214 160)">
-      <rect x="186" y="112" width="58" height="78" rx="5" fill="#E5E5E5"/>
-      <rect x="195" y="124" width="38" height="4" rx="2" fill="#A3A3A3"/>
-      <rect x="195" y="134" width="30" height="4" rx="2" fill="#A3A3A3"/>
+    <path d="M46 130 C48 80 92 44 144 42" fill="none" stroke="#111111" stroke-width="7"/>
+    <path d="M238 178 C230 224 194 250 152 258" fill="none" stroke="#111111" stroke-width="5"/>
+
+    <path d="M48 280 L68 216 Q86 192 126 186 L150 182 Q190 186 214 206 L238 280 Z" fill="#111111"/>
+    <path d="M134 186 L150 240 L168 184 Z" fill="#FFFFFF" stroke="#111111" stroke-width="1.5"/>
+    <path d="M128 188 L148 236 L110 210 Z" fill="#111111" stroke="#FFFFFF" stroke-width="1.5"/>
+    <path d="M172 186 L152 236 L192 208 Z" fill="#111111" stroke="#FFFFFF" stroke-width="1.5"/>
+    <path d="M142 192 L152 198 L162 192 L163 204 L152 198 L141 204 Z" fill="#111111"/>
+
+    <path d="M140 156 L162 156 L166 188 L136 188 Z" fill="#FFFFFF" stroke="#111111" stroke-width="2"/>
+    <ellipse cx="168" cy="122" rx="6" ry="10" fill="#FFFFFF" stroke="#111111" stroke-width="2"/>
+    <path d="M120 86 C130 74 156 72 168 84 C176 94 176 110 172 122 C170 138 164 152 152 158 C144 162 134 162 126 158 C120 154 118 148 118 142 L114 138 L117 134 C114 130 112 128 116 124 L108 120 C110 114 114 110 116 106 C116 98 116 92 120 86 Z" fill="#FFFFFF" stroke="#111111" stroke-width="2.5"/>
+    <path d="M150 150 C158 144 162 136 164 126" fill="none" stroke="#111111" stroke-width="1.5"/>
+    <path d="M116 100 C112 82 124 68 144 66 C160 65 174 74 176 90 C177 98 175 106 172 114 C170 102 166 94 158 90 C148 86 136 88 128 92 C122 95 118 98 116 100 Z" fill="#111111"/>
+    <path d="M124 90 C132 78 146 72 162 74" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.7"/>
+    <line x1="156" y1="108" x2="166" y2="114" stroke="#111111" stroke-width="3"/>
+    <line x1="114" y1="106" x2="158" y2="106" stroke="#111111" stroke-width="2.5"/>
+    <path d="M115 106 L130 106 L129 115 Q123 119 117 115 Z" fill="#111111"/>
+    <path d="M136 106 L157 106 L155 116 Q146 121 138 116 Z" fill="#111111"/>
+    <path d="M119 109 L123 109" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M141 109 L148 109" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M118 145 L130 144" fill="none" stroke="#111111" stroke-width="2.5"/>
+
+    <g transform="rotate(-12 214 170)">
+      <rect x="186" y="122" width="58" height="78" rx="5" fill="#FFFFFF" stroke="#111111" stroke-width="1.5"/>
+      <rect x="195" y="134" width="38" height="4" rx="2" fill="#A3A3A3"/>
+      <rect x="195" y="144" width="30" height="4" rx="2" fill="#A3A3A3"/>
     </g>
-    <g transform="rotate(5 212 160)">
-      <rect x="184" y="116" width="58" height="78" rx="5" fill="#FFFFFF"/>
-      <rect x="193" y="128" width="40" height="4" rx="2" fill="#A3A3A3"/>
-      <rect x="193" y="168" width="34" height="4" rx="2" fill="#A3A3A3"/>
-      <rect x="193" y="178" width="26" height="4" rx="2" fill="#A3A3A3"/>
+    <g transform="rotate(5 212 170)">
+      <rect x="184" y="126" width="58" height="78" rx="5" fill="#FFFFFF" stroke="#111111" stroke-width="1.5"/>
+      <rect x="193" y="138" width="40" height="4" rx="2" fill="#A3A3A3"/>
+      <rect x="193" y="178" width="34" height="4" rx="2" fill="#A3A3A3"/>
+      <rect x="193" y="188" width="26" height="4" rx="2" fill="#A3A3A3"/>
     </g>
-    <path d="M232 268 Q206 240 186 218" fill="none" stroke="#111111" stroke-width="22"/>
-    <rect x="180" y="210" width="16" height="8" rx="2" fill="#FFFFFF" transform="rotate(48 188 214)"/>
-    <ellipse cx="180" cy="206" rx="12" ry="11" fill="#D9D9D9"/>
-    <path d="M170 204 Q176 196 186 200" fill="none" stroke="#111111" stroke-width="2"/>
+
+    <path d="M232 278 Q206 250 186 228" fill="none" stroke="#111111" stroke-width="22"/>
+    <rect x="180" y="220" width="16" height="8" rx="2" fill="#FFFFFF" stroke="#111111" stroke-width="1.5" transform="rotate(48 188 224)"/>
+    <ellipse cx="180" cy="216" rx="12" ry="11" fill="#FFFFFF" stroke="#111111" stroke-width="2"/>
   </g>
-  <text x="64" y="90" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" font-style="italic" fill="#111111" letter-spacing="-1">001</text>
-  <text x="65" y="104" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#111111" letter-spacing="1.5">B.U.A.</text>
-  <line x1="184" y1="196" x2="196" y2="174" stroke="#111111" stroke-width="7" stroke-linecap="round"/>
-  <circle cx="206" cy="152" r="24" fill="#FFFFFF"/>
-  <rect x="192" y="148" width="28" height="7" rx="3.5" fill="#111111"/>
-  <rect x="194" y="138" width="20" height="5" rx="2.5" fill="#A3A3A3" opacity="0.8"/>
-  <rect x="194" y="160" width="24" height="5" rx="2.5" fill="#A3A3A3" opacity="0.8"/>
-  <circle cx="206" cy="152" r="24" fill="none" stroke="#111111" stroke-width="7"/>
-  <circle cx="206" cy="152" r="24" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.6"/>
-  <text x="300" y="140" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#111111">Req<tspan font-weight="400">Lens</tspan></text>
-  <text x="304" y="194" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" fill="#525252">Requirements analysis for the automotive industry</text>
-  <g>
-    <path d="M1060 228 L1060 206 Q1062 196 1076 193 L1108 188 L1134 167 Q1141 161 1154 161 L1204 161 Q1216 161 1224 169 L1244 188 L1264 192 Q1277 195 1278 208 L1278 228 Z" fill="#FFFFFF" stroke="#111111" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M1120 188 L1140 171 Q1145 167 1154 167 L1176 167 L1176 188 Z" fill="#E5E5E5"/>
-    <path d="M1184 167 L1204 167 Q1213 167 1219 173 L1234 188 L1184 188 Z" fill="#E5E5E5"/>
-    <rect x="1266" y="200" width="12" height="7" rx="3" fill="#A3A3A3"/>
-    <circle cx="1102" cy="230" r="17" fill="#111111" stroke="#A3A3A3" stroke-width="5"/>
-    <circle cx="1236" cy="230" r="17" fill="#111111" stroke="#A3A3A3" stroke-width="5"/>
-    <g fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round">
-      <path d="M1292 192 Q1302 206 1292 220"/>
-      <path d="M1306 182 Q1322 206 1306 230" opacity="0.7"/>
-      <path d="M1320 172 Q1342 206 1320 240" opacity="0.4"/>
-    </g>
-    <rect x="1346" y="196" width="26" height="50" rx="6" fill="#D4D4D4"/>
-    <rect x="1350" y="204" width="5" height="10" rx="2" fill="#111111"/>
+  <text x="64" y="100" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="800" font-style="italic" fill="#111111" letter-spacing="-1">001</text>
+  <text x="65" y="114" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#111111" letter-spacing="1.5">B.U.A.</text>
+  <line x1="184" y1="206" x2="196" y2="184" stroke="#111111" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="206" cy="162" r="24" fill="#FFFFFF" stroke="#111111" stroke-width="6"/>
+  <rect x="194" y="148" width="20" height="5" rx="2.5" fill="#A3A3A3"/>
+  <rect x="192" y="158" width="28" height="7" rx="3.5" fill="#111111"/>
+  <rect x="194" y="170" width="24" height="5" rx="2.5" fill="#A3A3A3"/>
+
+  <text x="300" y="148" font-family="Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#111111">Req<tspan font-weight="300">Lens</tspan></text>
+  <text x="304" y="200" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="#525252">Requirements analysis for the automotive industry</text>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M990 82 L1054 82 L1076 104 L1076 214 L990 214 Z" fill="#FFFFFF" stroke="#111111" stroke-width="2.5"/>
+    <path d="M1054 82 L1054 104 L1076 104" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <text x="1004" y="104" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#111111">SPEC</text>
+    <line x1="1004" y1="124" x2="1060" y2="124" stroke="#A3A3A3" stroke-width="4"/>
+    <line x1="1004" y1="140" x2="1050" y2="140" stroke="#A3A3A3" stroke-width="4"/>
+    <line x1="1004" y1="156" x2="1062" y2="156" stroke="#111111" stroke-width="4"/>
+    <line x1="1004" y1="172" x2="1044" y2="172" stroke="#A3A3A3" stroke-width="4"/>
+    <line x1="1004" y1="188" x2="1056" y2="188" stroke="#A3A3A3" stroke-width="4"/>
+
+    <line x1="1090" y1="148" x2="1132" y2="148" fill="none" stroke="#111111" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+
+    <rect x="1146" y="66" width="220" height="164" rx="10" fill="#FFFFFF" stroke="#111111" stroke-width="2.5"/>
+    <line x1="1146" y1="120" x2="1366" y2="120" stroke="#E5E5E5" stroke-width="1.5"/>
+    <line x1="1146" y1="174" x2="1366" y2="174" stroke="#E5E5E5" stroke-width="1.5"/>
+
+    <circle cx="1172" cy="93" r="11" fill="#111111"/>
+    <path d="M1166 93 L1170 97 L1178 89" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+    <line x1="1192" y1="93" x2="1270" y2="93" stroke="#A3A3A3" stroke-width="4"/>
+    <text x="1350" y="97" text-anchor="end" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#111111">OK</text>
+
+    <circle cx="1172" cy="147" r="11" fill="#FFFFFF" stroke="#111111" stroke-width="2.5"/>
+    <path d="M1167 142 L1177 152 M1177 142 L1167 152" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <line x1="1192" y1="147" x2="1254" y2="147" stroke="#111111" stroke-width="4"/>
+    <rect x="1272" y="136" width="80" height="22" rx="4" fill="#111111"/>
+    <text x="1312" y="151" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#FFFFFF">CONFLICT</text>
+
+    <circle cx="1172" cy="201" r="11" fill="#FFFFFF" stroke="#111111" stroke-width="2.5"/>
+    <text x="1172" y="206" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#111111">?</text>
+    <line x1="1192" y1="201" x2="1260" y2="201" stroke="#A3A3A3" stroke-width="4"/>
+    <rect x="1290" y="190" width="62" height="22" rx="4" fill="#FFFFFF" stroke="#111111" stroke-width="1.5"/>
+    <text x="1321" y="205" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#111111">VAGUE</text>
   </g>
 </svg>
