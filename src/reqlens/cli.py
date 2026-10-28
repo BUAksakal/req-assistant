@@ -38,11 +38,16 @@ def analyze(
     """Run the full workflow and let the engineer approve each finding."""
     from langgraph.types import Command
 
+    from reqlens.llm import LLMUnavailableError
     from reqlens.workflow import build_workflow
 
     workflow = build_workflow()
     config = {"configurable": {"thread_id": pdf.name}}
-    result = workflow.invoke({"pdf": str(pdf)}, config)
+    try:
+        result = workflow.invoke({"pdf": str(pdf)}, config)
+    except LLMUnavailableError as error:
+        typer.echo(f"\n{error}")
+        raise typer.Exit(1)
 
     findings = result["__interrupt__"][0].value
     approved = [f for f in findings if typer.confirm(f"\n{f}\nReal problem?")]

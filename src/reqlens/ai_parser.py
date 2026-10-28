@@ -3,7 +3,7 @@ from pathlib import Path
 from llama_index.core.prompts import PromptTemplate
 from pydantic import BaseModel
 
-from reqlens.llm import get_llm
+from reqlens.llm import MODELS, get_llm
 from reqlens.models import Requirement
 from reqlens.pdf_reader import read_pages
 
@@ -29,13 +29,15 @@ class DocumentResult(BaseModel):
     requirements: list[FoundRequirement]
 
 
-def extract_requirements_ai(path: Path) -> list[Requirement]:
+def extract_requirements_ai(path: Path, model: str = MODELS[0]) -> list[Requirement]:
     """Send the whole PDF text to the LLM and let it find the requirements."""
     pages = read_pages(path)
     document = "\n".join(
         f"=== PAGE {number} ===\n{text}" for number, text in enumerate(pages, start=1)
     )
-    result = get_llm().structured_predict(DocumentResult, PROMPT, document=document)
+    result = get_llm(model).structured_predict(
+        DocumentResult, PROMPT, document=document
+    )
     source = Path(path).name
     return [
         Requirement(id=r.id, text=r.text, source=source, page=r.page)
