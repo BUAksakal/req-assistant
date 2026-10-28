@@ -35,12 +35,6 @@ ReqLens is an **end-to-end requirements review tool built around AI agents**. Yo
 
 The AI proposes, the engineer decides. Both supervisor decisions fall back to a simple rule when no model answers, and every LLM answer is cached, so a second run of the same document costs nothing.
 
-<p align="center">
-  <img src="docs/assets/review.png" alt="ReqLens review screen: the supervisor's verdicts in the live console, 14 extracted requirements, and one ambiguity and one conflict waiting for the engineer's decision" width="100%">
-  <br>
-  <sub>The review screen after analysing a 3-page Lane Keeping Assist specification. The supervisor confirmed one conflict and rejected two, and the engineer has the final say.</sub>
-</p>
-
 ## The problem
 
 Car makers send their suppliers specifications (*Lastenhefte*) with hundreds of requirements. Engineers still copy them out of the PDF by hand and check them by eye:
