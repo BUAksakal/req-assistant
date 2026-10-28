@@ -26,8 +26,14 @@ EXTRACTION_PROMPT = PromptTemplate(
 VERIFY_PROMPT = PromptTemplate(
     "Another agent claims that these two requirements conflict.\n"
     "{first}\n{second}\nClaim: {claim}\n\n"
-    "Two requirements only conflict if a system cannot satisfy both at the same "
-    "time. Confirm the claim or reject it, with a one-sentence reason."
+    "Your job is to catch false alarms before an engineer reviews the claim. "
+    "In a specification, two different values or limits for the same property "
+    "under the same conditions are a real conflict, even if a design could meet "
+    "the stricter one. Convert units before you compare values.\n"
+    "Answer false_alarm only if the claim is clearly wrong: it misreads a value, "
+    "or the requirements are about different things (different sensors, inputs, "
+    "modes or conditions). Answer real if the claim holds, and unsure if you "
+    "cannot tell. Give a one-sentence reason."
 )
 
 
@@ -37,8 +43,14 @@ class ExtractionDecision(BaseModel):
 
 
 class Verdict(BaseModel):
-    confirmed: bool
+    verdict: Literal["real", "false_alarm", "unsure"]
     reason: str
+
+    @property
+    def keep(self) -> bool:
+        """Only a clear false alarm is dropped. Missing a conflict costs more
+        than showing the engineer one extra finding."""
+        return self.verdict != "false_alarm"
 
 
 def unextracted_shall_passages(

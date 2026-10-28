@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "httpx>=0.28.1",
     "langgraph>=1.2.18",
     "llama-index-embeddings-google-genai>=0.6.0",
     "llama-index-llms-google-genai>=0.11.3",

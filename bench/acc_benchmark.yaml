@@ -1,0 +1,152 @@
+# ReqLens benchmark: a fictional ACC specification with a known answer key.
+# Inspired by GAIA: unambiguous answers, three difficulty levels and decoys
+# that look like conflicts but are not, so guessing "conflict" costs precision.
+document:
+  company: Musterwerk Automotive GmbH
+  title: "Lastenheft: Adaptive Cruise Control (ACC)"
+  doc_id: LH-ACC-0001
+  version: "1.0"
+  date: "2026-10-28"
+  status: Benchmark
+  confidentiality: Public
+  revisions:
+    - version: "1.0"
+      date: "2026-10-28"
+      author: B. Aksakal
+      change: Benchmark version with answer key
+
+sections:
+  - number: "1"
+    title: Introduction
+    text: >-
+      This document specifies the Adaptive Cruise Control (ACC) of passenger
+      cars (category M1). ACC keeps the speed set by the driver and adapts it
+      to the vehicle ahead. Requirements are identified by IDs like ACC-R-010.
+
+  - number: "2"
+    title: Speed Control
+    requirements:
+      - id: ACC-R-010
+        title: Set speed range
+        text: The driver shall be able to set a target speed between 30 km/h and 160 km/h.
+      - id: ACC-R-011
+        title: Maximum set speed
+        text: The maximum target speed the driver can set shall be 180 km/h.
+      - id: ACC-R-012
+        title: Minimum time gap
+        text: The time gap to the vehicle ahead shall be at least 1.0 s in every gap setting.
+      - id: ACC-R-013
+        title: Gap settings
+        text: The shortest selectable time gap setting shall be 0.8 s.
+      - id: ACC-R-014
+        title: Set speed steps, long press
+        text: A long press on the speed button shall change the set speed in steps of 5 km/h.
+      - id: ACC-R-015
+        title: Cut-in reaction
+        text: The system shall react fast to a vehicle cutting in.
+      - id: ACC-R-016
+        title: Distance to stationary objects
+        text: The system shall keep a sufficient distance to stationary objects.
+
+  - number: "3"
+    title: Longitudinal Dynamics
+    requirements:
+      - id: ACC-R-020
+        title: Takeover request timing
+        text: If the system reaches its limits, a takeover request shall be shown to the driver within 2 s.
+      - id: ACC-R-021
+        title: Brake actuator
+        text: The system shall use the service brake for all decelerations.
+      - id: ACC-R-022
+        title: Maximum deceleration
+        text: In ACC mode, the system shall decelerate the vehicle by at most 3.5 m/s².
+      - id: ACC-R-024
+        title: Maximum acceleration
+        text: The longitudinal acceleration requested by ACC shall not exceed 2.5 m/s².
+      - id: ACC-R-026
+        title: Activation speed
+        text: ACC shall only be active at vehicle speeds above 30 km/h.
+      - id: ACC-R-027
+        title: Radar range
+        text: The radar sensor shall detect vehicles at a distance of at least 150 m.
+      - id: ACC-R-028
+        title: Camera range
+        text: The camera shall detect lane markings at a distance of at least 60 m.
+
+  - number: "4"
+    title: Comfort and Display
+    requirements:
+      - id: ACC-R-030
+        title: Following a braking vehicle
+        text: To follow a braking vehicle ahead, ACC may request a deceleration of up to 5 m/s².
+      - id: ACC-R-031
+        title: Braking comfort
+        text: Braking interventions shall feel as smooth as possible.
+      - id: ACC-R-032
+        title: System state display
+        text: The display shall inform the driver appropriately about the system state.
+      - id: ACC-R-033
+        title: Set speed steps, short press
+        text: A short press on the speed button shall change the set speed in steps of 1 km/h.
+      - id: ACC-R-034
+        title: Status indication
+        text: The ACC status shall be shown in the instrument cluster.
+
+  - number: "5"
+    title: Driver Takeover and Degradation
+    requirements:
+      - id: ACC-R-041
+        title: Takeover request deadline
+        text: A takeover request shall be issued no later than 4 s after the system has reached its limits.
+      - id: ACC-R-045
+        title: Acceleration after a stop
+        text: When resuming after a stop, ACC shall accelerate the vehicle with up to 0.3 g.
+      - id: ACC-R-047
+        title: Stop-and-go operation
+        text: In stop-and-go traffic, ACC shall keep controlling the vehicle down to 5 m/s.
+      - id: ACC-R-048
+        title: Weather robustness
+        text: The system shall work reliably in all weather conditions.
+      - id: ACC-R-049
+        title: Fault recovery
+        text: After a sensor fault, the system shall recover within a reasonable time.
+      - id: ACC-R-050
+        title: Switching off
+        text: The driver shall be able to switch ACC off with one button press.
+
+answer_key:
+  conflicts:
+    # Level 1: same section, same unit, next to each other
+    - pair: [ACC-R-010, ACC-R-011]
+      level: 1
+      why: Set speed ends at 160 km/h, but 180 km/h shall be settable.
+    - pair: [ACC-R-012, ACC-R-013]
+      level: 1
+      why: Every gap shall be at least 1.0 s, but 0.8 s shall be selectable.
+    # Level 2: different sections, pages apart
+    - pair: [ACC-R-020, ACC-R-041]
+      level: 2
+      why: Takeover request within 2 s versus no later than 4 s.
+    - pair: [ACC-R-022, ACC-R-030]
+      level: 2
+      why: At most 3.5 m/s² versus up to 5 m/s².
+    # Level 3: only visible after a unit conversion
+    - pair: [ACC-R-024, ACC-R-045]
+      level: 3
+      why: 0.3 g is about 2.9 m/s², more than the 2.5 m/s² limit.
+    - pair: [ACC-R-026, ACC-R-047]
+      level: 3
+      why: 5 m/s is 18 km/h, below the 30 km/h activation speed.
+  decoys:
+    # Look alike, same unit, but do not contradict each other
+    - pair: [ACC-R-014, ACC-R-033]
+      why: Long press and short press are different inputs.
+    - pair: [ACC-R-027, ACC-R-028]
+      why: Radar and camera are different sensors with different ranges.
+  vague:
+    - {id: ACC-R-015, level: 1, why: "fast"}
+    - {id: ACC-R-016, level: 1, why: "sufficient"}
+    - {id: ACC-R-031, level: 2, why: "as smooth as possible"}
+    - {id: ACC-R-032, level: 2, why: "appropriately"}
+    - {id: ACC-R-048, level: 3, why: "reliably in all weather conditions, untestable"}
+    - {id: ACC-R-049, level: 3, why: "within a reasonable time"}

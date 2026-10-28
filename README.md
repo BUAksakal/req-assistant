@@ -68,11 +68,11 @@ The whole flow is a **LangGraph** graph. Two agents work inside it:
 | **LLM extraction** | Gemini reads the PDF in **8-page chunks** (1-page overlap) and returns typed `Requirement` objects. IDs are normalised, each chunk is cached | One call for a long document stopped halfway. Chunks keep it complete |
 | **Ambiguity check** | Flags words such as *fast*, *about*, *sufficient* | Cheap baseline, no LLM |
 | **Conflict check** | A **LlamaIndex agent** looks up related requirements through a semantic index (RAG) and decides whether they contradict. At most 12 checks per document, the most similar requirements first | The agent writes its own search query for every requirement |
-| **Supervisor: verification** | Gemini takes a second look at every conflict the agent reported and drops false alarms | Fewer wrong findings for the engineer |
+| **Supervisor: verification** | Gemini takes a second look at every conflict the agent reported: `real`, `false_alarm` or `unsure`. Only clear false alarms are dropped | Fewer wrong findings, without hiding real ones |
 | **Engineer review** | The workflow **pauses** (LangGraph `interrupt` + checkpointer) and resumes after the engineer's answer | LLMs can be confidently wrong. A human makes the final call |
 | **Report** | Findings and decisions go into SQLite. The approval rate is the measured precision | Shows how often the AI was right |
 
-**Guardrails.** Supervisor answers are typed (`accept` / `use_llm`, `confirmed: bool`), so the LLM cannot invent a new path. Every answer is cached per document, so a second run costs no quota. When all five Gemini models are busy, the supervisor falls back to a rule and keeps every conflict for the engineer instead of dropping it. Documents over 60 pages are refused before any LLM call.
+**Guardrails.** Supervisor answers are typed (`accept` / `use_llm`, `real` / `false_alarm` / `unsure`), so the LLM cannot invent a new path. Every answer is cached per document, so a second run costs no quota. When all five Gemini models are busy, the supervisor falls back to a rule and keeps every conflict for the engineer instead of dropping it. Documents over 60 pages are refused before any LLM call.
 
 ## Results
 
@@ -97,6 +97,37 @@ The regex only knows the format it was written for. The supervisor notices this 
 | Conflicts (`AEB-001 ↔ AEB-002`, `AEB-014 ↔ AEB-018`) | **2 / 2** ✅ |
 | Ambiguous wording | **1 / 3** ⚠️ |
 | Untestable requirement | not checked yet |
+
+### Benchmark: three levels, with decoys
+
+Inspired by [GAIA](https://huggingface.co/papers/2311.12983): one specification with an unambiguous [answer key](bench/acc_benchmark.yaml), conflicts at three levels of difficulty, and **decoys**, pairs that look like conflicts but are not. Guessing "conflict" everywhere costs precision.
+
+[`bench/acc_benchmark.pdf`](bench/acc_benchmark.pdf): 25 requirements for an Adaptive Cruise Control, IDs like `ACC-R-010`.
+
+| Level | Conflicts found by the agent | Kept by the supervisor | Vague wording found |
+|---|:---:|:---:|:---:|
+| 1: next to each other | 2/2 | 2/2 | 2/2 |
+| 2: pages apart | 2/2 | 2/2 | 1/2 |
+| 3: only visible after a unit conversion (`0.3 g` vs `2.5 m/s²`) | 1/2 | 1/2 | 0/2 |
+
+- **Extraction:** 25/25 requirements, the regex found 0.
+- **Conflict agent:** 5 of 6 conflicts found, **all 5 correct**, no decoy reported.
+- **Supervisor:** keeps all 5 correct conflicts, and rejects **2/2 decoys** when they are handed to it as conflicts.
+- **Time:** 57 s from PDF to engineer review on a fresh run.
+
+**What the benchmark changed.** The first version of the supervisor only accepted a conflict "if a system cannot satisfy both", so it dropped *within 2 s* vs *no later than 4 s*. The benchmark measured the damage, the prompt was changed, and the same run was scored again:
+
+| Supervisor | Correct conflicts kept | Decoys rejected |
+|---|:---:|:---:|
+| v1: "conflict only if both cannot be met" | 3/5 | not measured |
+| v2: "drop only clear false alarms, keep when unsure" | **5/5** | **2/2** |
+
+Still open: one unit-conversion conflict (`5 m/s` vs `30 km/h`) is not found, and the word list misses vague phrases at level 2 and 3.
+
+```bash
+uv run reqlens bench            # score one run (answers are cached)
+uv run reqlens bench --fresh    # ask every LLM answer again, to measure run-to-run variation
+```
 
 ## Quick start
 
@@ -189,14 +220,17 @@ src/reqlens/
 ├── requirement_index.py  # semantic index over requirements
 ├── analysis_agent.py     # LlamaIndex conflict agent
 ├── supervisor.py         # supervisor agent: extraction decision, conflict verification
+├── benchmark.py          # GAIA-style benchmark scoring (reqlens bench)
 ├── workflow.py           # LangGraph workflow with engineer review
 ├── cache.py              # LLM answer cache
 ├── storage.py            # SQLite runs and review decisions
-└── cli.py                # reqlens parse / analyze / history
+└── cli.py                # reqlens parse / analyze / bench / history
 tests/                    # pytest, no API key needed
 scripts/build_examples.py # renders the example spec PDF and answer keys from YAML
+scripts/build_benchmark.py # renders the benchmark PDF and answer key
 examples/                 # example specification (YAML source + PDF)
 eval/                     # answer keys
+bench/                    # benchmark specification, PDF and answer key
 Dockerfile                # container image for the web interface
 ```
 
@@ -207,12 +241,12 @@ Dockerfile                # container image for the web interface
 Being honest about what does not work yet:
 
 - **Ambiguity** uses a word list and misses phrases like *"as smooth as possible"* or *"appropriately"*.
-- **LLM answers vary** between runs. The supervisor can be too lenient: it sometimes rejects a real conflict, for example two different minimum speeds for the same function. That is why the engineer review exists.
+- **LLM answers vary** between runs, and the conflict agent misses conflicts that need a unit conversion (`5 m/s` vs `30 km/h`). That is why the engineer review exists.
 - **The same pair can be checked twice** (`A ↔ B` and `B ↔ A`) and get two different verdicts.
 - **Free Gemini tier** is limited (few requests per day, frequent `503`). ReqLens switches between five models and caches every answer, but a full analysis can take minutes.
 - **Document size:** the LLM reads at most **60 pages** per document (9 requests) and uploads are capped at **20 MB**, so one file cannot use up the daily quota. Longer specifications have to be split.
 - **Demo history** is stored inside the running app and resets when the demo restarts.
-- The conflict analysis has been measured on the example specification only.
+- The conflict analysis has been measured on two fictional specifications (example and benchmark), not yet on a real one.
 
 ## Roadmap
 
@@ -224,6 +258,8 @@ Being honest about what does not work yet:
 - [x] Supervisor agent with guardrails
 - [x] Analysis on a real regulation (UN R152)
 - [x] Docker image and live demo
+- [x] GAIA-style benchmark with three levels and decoys
+- [x] Supervisor keeps conflicts it is unsure about (measured with the benchmark)
 - [ ] Check each requirement pair only once
 - [ ] LLM-based ambiguity check
 - [ ] Deployment on AWS

@@ -1,0 +1,127 @@
+{
+  "conflicts": [
+    {
+      "pair": [
+        "ACC-R-010",
+        "ACC-R-011"
+      ],
+      "level": 1,
+      "why": "Set speed ends at 160 km/h, but 180 km/h shall be settable."
+    },
+    {
+      "pair": [
+        "ACC-R-012",
+        "ACC-R-013"
+      ],
+      "level": 1,
+      "why": "Every gap shall be at least 1.0 s, but 0.8 s shall be selectable."
+    },
+    {
+      "pair": [
+        "ACC-R-020",
+        "ACC-R-041"
+      ],
+      "level": 2,
+      "why": "Takeover request within 2 s versus no later than 4 s."
+    },
+    {
+      "pair": [
+        "ACC-R-022",
+        "ACC-R-030"
+      ],
+      "level": 2,
+      "why": "At most 3.5 m/s\u00b2 versus up to 5 m/s\u00b2."
+    },
+    {
+      "pair": [
+        "ACC-R-024",
+        "ACC-R-045"
+      ],
+      "level": 3,
+      "why": "0.3 g is about 2.9 m/s\u00b2, more than the 2.5 m/s\u00b2 limit."
+    },
+    {
+      "pair": [
+        "ACC-R-026",
+        "ACC-R-047"
+      ],
+      "level": 3,
+      "why": "5 m/s is 18 km/h, below the 30 km/h activation speed."
+    }
+  ],
+  "decoys": [
+    {
+      "pair": [
+        "ACC-R-014",
+        "ACC-R-033"
+      ],
+      "why": "Long press and short press are different inputs."
+    },
+    {
+      "pair": [
+        "ACC-R-027",
+        "ACC-R-028"
+      ],
+      "why": "Radar and camera are different sensors with different ranges."
+    }
+  ],
+  "vague": [
+    {
+      "id": "ACC-R-015",
+      "level": 1,
+      "why": "fast"
+    },
+    {
+      "id": "ACC-R-016",
+      "level": 1,
+      "why": "sufficient"
+    },
+    {
+      "id": "ACC-R-031",
+      "level": 2,
+      "why": "as smooth as possible"
+    },
+    {
+      "id": "ACC-R-032",
+      "level": 2,
+      "why": "appropriately"
+    },
+    {
+      "id": "ACC-R-048",
+      "level": 3,
+      "why": "reliably in all weather conditions, untestable"
+    },
+    {
+      "id": "ACC-R-049",
+      "level": 3,
+      "why": "within a reasonable time"
+    }
+  ],
+  "requirements": [
+    "ACC-R-010",
+    "ACC-R-011",
+    "ACC-R-012",
+    "ACC-R-013",
+    "ACC-R-014",
+    "ACC-R-015",
+    "ACC-R-016",
+    "ACC-R-020",
+    "ACC-R-021",
+    "ACC-R-022",
+    "ACC-R-024",
+    "ACC-R-026",
+    "ACC-R-027",
+    "ACC-R-028",
+    "ACC-R-030",
+    "ACC-R-031",
+    "ACC-R-032",
+    "ACC-R-033",
+    "ACC-R-034",
+    "ACC-R-041",
+    "ACC-R-045",
+    "ACC-R-047",
+    "ACC-R-048",
+    "ACC-R-049",
+    "ACC-R-050"
+  ]
+}

@@ -1,3 +1,4 @@
+import httpx
 import pytest
 from google.genai import errors
 
@@ -49,3 +50,16 @@ def test_models_that_do_not_exist_are_skipped_without_waiting():
 
     assert llm.call_with_fallback(fn) == "ok"
     assert calls == [llm.MODELS[0], llm.MODELS[1]]
+
+
+def test_a_dropped_connection_is_retried():
+    calls = []
+
+    def fn(model):
+        calls.append(model)
+        if len(calls) == 1:
+            raise httpx.RemoteProtocolError("Server disconnected")
+        return "ok"
+
+    assert llm.call_with_fallback(fn) == "ok"
+    assert calls == [llm.MODELS[0], llm.MODELS[0]]

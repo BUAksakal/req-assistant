@@ -1,6 +1,7 @@
 import time
 from collections.abc import Callable
 
+import httpx
 from dotenv import load_dotenv
 from google.genai import errors
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
@@ -37,7 +38,7 @@ _last_working = 0
 
 
 def call_with_fallback[T](fn: Callable[[str], T], attempts: int = 2) -> T:
-    """Call fn(model) and switch to the next model when one is busy (503/429).
+    """Call fn(model) and switch to the next model when one is busy or unreachable.
 
     Starts with the model that answered last time, so a busy model is not
     retried for every single call.
@@ -59,6 +60,12 @@ def call_with_fallback[T](fn: Callable[[str], T], attempts: int = 2) -> T:
                     raise
                 print(f"{model} busy ({error.code}), attempt {attempt}/{attempts}")
                 time.sleep(10)
+            except httpx.TransportError as error:
+                # A dropped connection is as temporary as a busy model.
+                print(
+                    f"{model} connection lost ({error}), attempt {attempt}/{attempts}"
+                )
+                time.sleep(5)
     raise LLMUnavailableError(
         "All Gemini models are busy right now. Please try again in a few minutes."
     )

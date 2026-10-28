@@ -72,6 +72,24 @@ def analyze(
 
 
 @app.command()
+def bench(
+    fresh: Annotated[
+        bool, typer.Option("--fresh", help="Ask every LLM answer again.")
+    ] = False,
+) -> None:
+    """Score ReqLens on the benchmark specification with its answer key."""
+    from reqlens.benchmark import as_markdown, run
+    from reqlens.llm import LLMUnavailableError
+
+    try:
+        result = run(fresh=fresh)
+    except LLMUnavailableError as error:
+        typer.echo(f"\n{error}")
+        raise typer.Exit(1)
+    typer.echo(as_markdown(result))
+
+
+@app.command()
 def history(
     db: Annotated[Path, typer.Option(help="Database file.")] = Path("reqlens.db"),
 ) -> None:
