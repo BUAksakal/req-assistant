@@ -10,7 +10,7 @@ import streamlit as st
 
 ROOT = Path(__file__).parent
 LOGO = ROOT / "docs" / "assets" / "logo.svg"
-WORKFLOW = ROOT / "docs" / "assets" / "reqlens-workflow.svg"
+WORKFLOW = ROOT / "docs" / "assets" / "reqlens-agent-flow.svg"
 
 NODES = [
     ("classic_extract", "Classic extract", "regex"),
