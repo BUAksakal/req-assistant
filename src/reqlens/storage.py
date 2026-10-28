@@ -17,6 +17,11 @@ CREATE TABLE IF NOT EXISTS findings (
     description TEXT NOT NULL,
     approved INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS llm_cache (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
 """
 
 
