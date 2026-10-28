@@ -1,7 +1,13 @@
 from typer.testing import CliRunner
 
 from reqlens.cli import app
-from reqlens.storage import approval_rate, connect, save_run
+from reqlens.storage import (
+    analyses_today,
+    approval_rate,
+    connect,
+    record_analysis,
+    save_run,
+)
 
 
 def test_save_run_and_approval_rate(tmp_path):
@@ -29,3 +35,12 @@ def test_history_command_shows_runs(tmp_path):
     assert "#1" in result.output
     assert "1/1 findings approved" in result.output
     assert "100%" in result.output
+
+
+def test_started_analyses_are_counted_for_today(tmp_path):
+    conn = connect(tmp_path / "test.db")
+    conn.execute("INSERT INTO analyses (started_at) VALUES ('2020-01-01T10:00:00')")
+    record_analysis(conn)
+    record_analysis(conn)
+
+    assert analyses_today(conn) == 2

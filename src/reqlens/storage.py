@@ -17,6 +17,9 @@ CREATE TABLE IF NOT EXISTS findings (
     description TEXT NOT NULL,
     approved INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS analyses (
+    started_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS llm_cache (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL,
@@ -73,3 +76,20 @@ def list_runs(conn: sqlite3.Connection) -> list[tuple]:
         ORDER BY r.id
         """
     ).fetchall()
+
+
+def record_analysis(conn: sqlite3.Connection) -> None:
+    """Count one started analysis, also the ones that are never reviewed."""
+    conn.execute(
+        "INSERT INTO analyses (started_at) VALUES (?)",
+        (datetime.now(UTC).isoformat(timespec="seconds"),),
+    )
+    conn.commit()
+
+
+def analyses_today(conn: sqlite3.Connection) -> int:
+    """Analyses started today (UTC) by all visitors together."""
+    today = datetime.now(UTC).date().isoformat()
+    return conn.execute(
+        "SELECT COUNT(*) FROM analyses WHERE started_at >= ?", (today,)
+    ).fetchone()[0]
