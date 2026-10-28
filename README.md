@@ -28,7 +28,7 @@ These problems are usually written by different teams, end up 40 pages apart and
 ## How it works
 
 <p align="center">
-  <img src="docs/assets/reqlens-workflow.svg" alt="ReqLens workflow: PDF, classic extraction, LLM extraction, vague check, LlamaIndex conflict agent with semantic index, LangGraph supervisor agent that decides the extraction path and verifies conflicts, engineer review, report" width="100%">
+  <img src="docs/assets/reqlens-agent-flow.svg" alt="ReqLens workflow: PDF, classic extraction, LLM extraction, vague check, LlamaIndex conflict agent with semantic index, LangGraph supervisor agent that decides the extraction path and verifies conflicts, engineer review, report" width="100%">
 </p>
 
 | Step | What happens | Why this way |
