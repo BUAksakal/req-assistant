@@ -1,9 +1,15 @@
 """ReqLens web interface. Start it with: uv run streamlit run app.py"""
 
 import html
+import sys
 import tempfile
 import uuid
 from pathlib import Path
+
+ROOT = Path(__file__).parent
+# Streamlit Cloud installs the reqlens package once and keeps it while the
+# version stays the same, so new code would be missing. Read it from src/.
+sys.path.insert(0, str(ROOT / "src"))
 
 import pandas as pd
 import pymupdf
@@ -11,7 +17,6 @@ import streamlit as st
 
 from reqlens.ai_parser import MAX_PAGES
 
-ROOT = Path(__file__).parent
 LOGO = ROOT / "docs" / "assets" / "logo.svg"
 MAX_MB = 20
 # The demo is public and runs on the free Gemini tier. These limits keep one
