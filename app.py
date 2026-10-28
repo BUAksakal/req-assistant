@@ -13,11 +13,13 @@ LOGO = ROOT / "docs" / "assets" / "logo.svg"
 WORKFLOW = ROOT / "docs" / "assets" / "reqlens-workflow.svg"
 
 NODES = [
-    ("classic_extract", "Classic extract", "PyMuPDF + regex"),
+    ("classic_extract", "Classic extract", "regex"),
+    ("supervise_extraction", "Supervisor", "enough found?"),
     ("ai_extract", "LLM extract", "Gemini"),
     ("check_vague", "Vague check", "word rules"),
-    ("check_conflicts", "Conflict agent", "LlamaIndex + RAG"),
-    ("review", "Engineer review", "human in the loop"),
+    ("check_conflicts", "Conflict agent", "LlamaIndex"),
+    ("verify_findings", "Supervisor", "verify"),
+    ("review", "Engineer", "review"),
     ("report", "Report", "SQLite"),
 ]
 ICONS = {"pending": "○", "active": "●", "done": "✓", "skipped": "–", "waiting": "❙❙"}
@@ -129,18 +131,24 @@ def run_analysis(pdf_path: Path) -> None:
                     show(f"▶ agent checks {chunk['checking']}")
                 elif "cached" in chunk:
                     show(f"✓ {chunk['cached']} answered from cache, no LLM call")
+                elif "supervisor" in chunk:
+                    show(f"◆ supervisor: {chunk['supervisor']}")
                 else:
                     hits = ", ".join(chunk["hits"][:3])
                     show(f'   find_related("{chunk["search"]}") → {hits}')
                 continue
             for node, update in chunk.items():
                 if node == "classic_extract":
-                    found = len(update["requirements"])
-                    states[node] = "done"
-                    states["ai_extract"] = "skipped" if found else "active"
-                    if found:
+                    states.update(classic_extract="done", supervise_extraction="active")
+                    show(f"✓ classic extractor found {len(update['requirements'])}")
+                elif node == "supervise_extraction":
+                    use_llm = update["extraction"] == "use_llm"
+                    states.update(
+                        supervise_extraction="done",
+                        ai_extract="active" if use_llm else "skipped",
+                    )
+                    if not use_llm:
                         states["check_vague"] = "active"
-                    show(f"✓ classic extractor found {found} requirements")
                 elif node == "ai_extract":
                     states.update(ai_extract="done", check_vague="active")
                     show(f"✓ LLM extracted {len(update['requirements'])} requirements")
@@ -148,8 +156,13 @@ def run_analysis(pdf_path: Path) -> None:
                     states.update(check_vague="done", check_conflicts="active")
                     show(f"✓ {len(update['vague'])} requirement(s) with vague wording")
                 elif node == "check_conflicts":
-                    states.update(check_conflicts="done", review="waiting")
+                    states.update(check_conflicts="done", verify_findings="active")
                     show(f"✓ agent reported {len(update['conflicts'])} conflict(s)")
+                elif node == "verify_findings":
+                    states.update(verify_findings="done", review="waiting")
+                    show(
+                        f"✓ {len(update['conflicts'])} conflict(s) passed verification"
+                    )
     except LLMUnavailableError as error:
         st.error(str(error), icon=":material/error:")
         return
