@@ -8,9 +8,17 @@ from llama_index.llms.google_genai import GoogleGenAI
 
 load_dotenv()
 
-MODELS = ["gemini-3.1-flash-lite", "gemini-2.5-flash"]
+# Every model has its own free-tier quota, so more models mean more free capacity.
+MODELS = [
+    "gemini-3.1-flash-lite",
+    "gemini-3.5-flash-lite",
+    "gemini-2.5-flash",
+    "gemini-3.5-flash",
+    "gemini-3-flash-preview",
+]
 EMBED_MODEL = "gemini-embedding-001"
 RETRY_CODES = {429, 503}
+SKIP_CODES = {404}
 
 
 class LLMUnavailableError(RuntimeError):
@@ -44,6 +52,9 @@ def call_with_fallback[T](fn: Callable[[str], T], attempts: int = 2) -> T:
                 _last_working = index
                 return result
             except (errors.ClientError, errors.ServerError) as error:
+                if error.code in SKIP_CODES:
+                    print(f"{model} is not available ({error.code}), skipping it")
+                    break
                 if error.code not in RETRY_CODES:
                     raise
                 print(f"{model} busy ({error.code}), attempt {attempt}/{attempts}")

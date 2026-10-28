@@ -133,6 +133,8 @@ def run_analysis(pdf_path: Path) -> None:
                     show(f"✓ {chunk['cached']} answered from cache, no LLM call")
                 elif "supervisor" in chunk:
                     show(f"◆ supervisor: {chunk['supervisor']}")
+                elif "note" in chunk:
+                    show(f"· {chunk['note']}")
                 else:
                     hits = ", ".join(chunk["hits"][:3])
                     show(f'   find_related("{chunk["search"]}") → {hits}')

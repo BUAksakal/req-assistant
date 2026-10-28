@@ -1,7 +1,6 @@
 import json
 import re
 from functools import partial
-from pathlib import Path
 from typing import TypedDict
 
 from langgraph.checkpoint.memory import InMemorySaver
@@ -13,6 +12,10 @@ from langgraph.types import interrupt
 from reqlens.ambiguity import find_vague_words
 from reqlens.models import Requirement
 from reqlens.pdf_reader import extract_requirements
+
+MAX_CONFLICT_CHECKS = 12
+UNIT = re.compile(r"\d\s*(km/h|m/s²|m/s2|m/s|ms|s|m|%)(?![\w/])")
+WORD = re.compile(r"[a-z]{4,}")
 
 
 class State(TypedDict, total=False):
@@ -30,20 +33,15 @@ def classic_extract(state: State) -> State:
 
 
 def ai_extract(state: State) -> State:
-    from reqlens.ai_parser import extract_requirements_ai
-    from reqlens.cache import fingerprint, lookup, store
-    from reqlens.llm import call_with_fallback
+    from reqlens.ai_parser import extract_with_cache
 
-    pdf = Path(state["pdf"])
-    key = f"extract:{fingerprint(pdf.read_bytes())}"
-    saved = lookup(key)
-    if saved is None:
-        found = call_with_fallback(partial(extract_requirements_ai, pdf))
-        saved = json.dumps([req.model_dump() for req in found])
-        store(key, saved)
-    requirements = [
-        Requirement(**{**item, "source": pdf.name}) for item in json.loads(saved)
-    ]
+    progress = get_stream_writer()
+    requirements = extract_with_cache(
+        state["pdf"],
+        on_chunk=lambda first, last: progress(
+            {"note": f"LLM reads pages {first}-{last}"}
+        ),
+    )
     return {"requirements": requirements}
 
 
@@ -104,6 +102,31 @@ def check_vague(state: State) -> State:
     return {"vague": vague}
 
 
+def pick_conflict_candidates(
+    numeric: list[Requirement], limit: int = MAX_CONFLICT_CHECKS
+) -> list[Requirement]:
+    """Pick the requirements most likely to contradict another one.
+
+    A requirement ranks high when another requirement uses the same unit and
+    shares many words with it, for example two failure warning times in seconds.
+    """
+    if len(numeric) <= limit:
+        return numeric
+    units = {req.id: set(UNIT.findall(req.text)) for req in numeric}
+    words = {req.id: set(WORD.findall(req.text.lower())) for req in numeric}
+
+    def similarity(req: Requirement) -> float:
+        best = 0.0
+        for other in numeric:
+            if other.id == req.id or not units[req.id] & units[other.id]:
+                continue
+            shared = words[req.id] & words[other.id]
+            best = max(best, len(shared) / len(words[req.id] | words[other.id]))
+        return best
+
+    return sorted(numeric, key=similarity, reverse=True)[:limit]
+
+
 def check_conflicts(state: State) -> State:
     from reqlens.analysis_agent import make_conflict_checker
     from reqlens.cache import fingerprint, lookup, store
@@ -112,11 +135,18 @@ def check_conflicts(state: State) -> State:
     progress = get_stream_writer()
     requirements = state["requirements"]
     document = fingerprint("\n".join(f"{r.id}|{r.text}" for r in requirements))
+    numeric = [req for req in requirements if re.search(r"\d", req.text)]
+    candidates = pick_conflict_candidates(numeric)
+    if len(candidates) < len(numeric):
+        progress(
+            {
+                "note": f"budget: checking the {len(candidates)} most similar of "
+                f"{len(numeric)} requirements with values"
+            }
+        )
     check = None
     conflicts = {}
-    for req in requirements:
-        if not re.search(r"\d", req.text):
-            continue
+    for req in candidates:
         key = f"conflict:{document}:{req.id}"
         answer = lookup(key)
         if answer is None:
