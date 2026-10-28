@@ -28,15 +28,17 @@ These problems are usually written by different teams, end up 40 pages apart and
 ## How it works
 
 <p align="center">
-  <img src="docs/assets/reqlens-workflow.svg" alt="ReqLens workflow: PDF, classic extraction, LLM fallback, vague check, LlamaIndex conflict agent with semantic index, engineer review, report" width="100%">
+  <img src="docs/assets/reqlens-workflow.svg" alt="ReqLens workflow: PDF, classic extraction, supervisor decision, LLM extraction, vague check, LlamaIndex conflict agent with semantic index, supervisor verification, engineer review, report" width="100%">
 </p>
 
 | Step | What happens | Why this way |
 |---|---|---|
 | **Classic extraction** | PyMuPDF reads the text page by page, a regex finds IDs like `AEB-001` | Free, fast and deterministic. Tried first |
-| **LLM extraction** | If the regex finds nothing, the whole text goes to Gemini in **one call** and comes back as typed `Requirement` objects | Understands any ID format. Only used when needed |
+| **Supervisor: extraction** | Looks for *shall* sentences the regex missed. If there are any, Gemini decides: accept or switch to the LLM | The workflow chooses its own path per document |
+| **LLM extraction** | Gemini reads the PDF in **8-page chunks** (1-page overlap) and returns typed `Requirement` objects. IDs are normalised, each chunk is cached | One call for a long document stopped halfway. Chunks keep it complete |
 | **Ambiguity check** | Flags words such as *fast*, *about*, *sufficient* | Cheap baseline, no LLM |
 | **Conflict check** | A **LlamaIndex agent** looks up related requirements through a semantic index (RAG) and decides whether they contradict | The agent writes its own search query for every requirement |
+| **Supervisor: verification** | Gemini takes a second look at every conflict the agent reported and drops false alarms | Fewer wrong findings for the engineer |
 | **Engineer review** | The workflow **pauses** (LangGraph `interrupt` + checkpointer) and resumes after the engineer's answer | LLMs can be confidently wrong. A human makes the final call |
 
 ## Results

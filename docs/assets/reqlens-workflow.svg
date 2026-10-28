@@ -1,10 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1250" height="400" viewBox="0 0 1250 400" role="img" aria-label="ReqLens workflow: a PDF is read, requirements are extracted, checked for vague wording and conflicts by a LlamaIndex agent, reviewed by an engineer and stored">
+<svg xmlns="http://www.w3.org/2000/svg" width="1580" height="400" viewBox="0 0 1580 400" role="img" aria-label="ReqLens workflow: a PDF is read by the classic extractor, a supervisor decides whether the LLM must extract instead, requirements are checked for vague wording and conflicts by a LlamaIndex agent, a supervisor verifies each conflict, an engineer reviews and the result is stored">
   <style>
     .t { font: 600 15px Helvetica, Arial, sans-serif; fill: #111111; }
     .s { font: 12px Helvetica, Arial, sans-serif; fill: #737373; }
     .l { font: 600 11px Helvetica, Arial, sans-serif; fill: #737373; letter-spacing: 0.06em; }
     .m { font: 12px Menlo, Consolas, monospace; fill: #525252; }
     .box { fill: #FFFFFF; stroke: #111111; stroke-width: 1.5; }
+    .sup { fill: #111111; stroke: #111111; stroke-width: 1.5; }
+    .ti { font: 600 15px Helvetica, Arial, sans-serif; fill: #FFFFFF; }
+    .si { font: 12px Helvetica, Arial, sans-serif; fill: #D4D4D4; }
     .edge { fill: none; stroke: #111111; stroke-width: 1.5; }
     .flow { stroke-dasharray: 6 6; animation: dash 0.9s linear infinite; }
     .soft { stroke: #A3A3A3; }
@@ -19,20 +22,22 @@
     </marker>
   </defs>
 
-  <rect x="1" y="1" width="1248" height="398" rx="14" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
-  <rect x="140" y="30" width="1080" height="330" rx="12" fill="none" stroke="#525252" stroke-width="1.8" stroke-dasharray="8 6"/>
-  <rect x="158" y="21" width="168" height="20" rx="4" fill="#111111"/>
-  <text x="242" y="35" class="l" text-anchor="middle" fill="#FFFFFF" style="fill:#FFFFFF">LANGGRAPH WORKFLOW</text>
+  <rect x="1" y="1" width="1578" height="398" rx="14" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
+  <rect x="128" y="30" width="1422" height="330" rx="12" fill="none" stroke="#525252" stroke-width="1.8" stroke-dasharray="8 6"/>
+  <rect x="146" y="21" width="168" height="20" rx="4" fill="#111111"/>
+  <text x="230" y="35" class="l" text-anchor="middle" style="fill:#FFFFFF">LANGGRAPH WORKFLOW</text>
 
-  <line x1="112" y1="210" x2="160" y2="210" class="edge flow" marker-end="url(#arrow)"/>
-  <line x1="292" y1="210" x2="538" y2="210" class="edge flow" marker-end="url(#arrow)"/>
-  <text x="404" y="200" class="s" text-anchor="middle">requirements found</text>
-  <path d="M292 192 L330 192 L330 104 L352 104" class="edge soft flow" marker-end="url(#arrow-soft)"/>
-  <text x="300" y="148" class="s">0 found</text>
-  <path d="M488 104 L512 104 L512 192 L538 192" class="edge soft flow" marker-end="url(#arrow-soft)"/>
-  <line x1="672" y1="210" x2="728" y2="210" class="edge flow" marker-end="url(#arrow)"/>
-  <line x1="872" y1="210" x2="928" y2="210" class="edge flow" marker-end="url(#arrow)"/>
-  <line x1="1062" y1="210" x2="1098" y2="210" class="edge flow" marker-end="url(#arrow)"/>
+  <line x1="112" y1="210" x2="148" y2="210" class="edge flow" marker-end="url(#arrow)"/>
+  <line x1="280" y1="210" x2="318" y2="210" class="edge flow" marker-end="url(#arrow)"/>
+  <line x1="460" y1="210" x2="678" y2="210" class="edge flow" marker-end="url(#arrow)"/>
+  <text x="569" y="200" class="s" text-anchor="middle">accept</text>
+  <path d="M460 192 L478 192 L478 104 L498 104" class="edge soft flow" marker-end="url(#arrow-soft)"/>
+  <text x="486" y="150" class="s">use_llm</text>
+  <path d="M640 104 L660 104 L660 192 L678 192" class="edge soft flow" marker-end="url(#arrow-soft)"/>
+  <line x1="810" y1="210" x2="864" y2="210" class="edge flow" marker-end="url(#arrow)"/>
+  <line x1="1006" y1="210" x2="1068" y2="210" class="edge flow" marker-end="url(#arrow)"/>
+  <line x1="1200" y1="210" x2="1238" y2="210" class="edge flow" marker-end="url(#arrow)"/>
+  <line x1="1372" y1="210" x2="1410" y2="210" class="edge flow" marker-end="url(#arrow)"/>
 
   <g>
     <path d="M30 172 L84 172 L104 192 L104 248 L30 248 Z" class="box"/>
@@ -45,70 +50,88 @@
   </g>
 
   <g>
-    <rect x="162" y="176" width="130" height="68" rx="8" class="box">
-      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4;1.5;1.5" keyTimes="0;0.05;0.07;0.15;0.17;1"/>
+    <rect x="150" y="176" width="130" height="68" rx="8" class="box">
+      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4;1.5;1.5" keyTimes="0;0.05;0.06;0.12;0.13;1"/>
     </rect>
-    <text x="227" y="205" class="t" text-anchor="middle">Classic extract</text>
-    <text x="227" y="224" class="s" text-anchor="middle">PyMuPDF + regex</text>
+    <text x="215" y="205" class="t" text-anchor="middle">Classic extract</text>
+    <text x="215" y="224" class="s" text-anchor="middle">PyMuPDF + regex</text>
   </g>
 
   <g>
-    <rect x="354" y="70" width="134" height="68" rx="8" class="box" stroke-dasharray="5 4"/>
-    <text x="421" y="99" class="t" text-anchor="middle">LLM extract</text>
-    <text x="421" y="118" class="s" text-anchor="middle">Gemini, typed output</text>
+    <rect x="320" y="176" width="140" height="68" rx="8" class="sup">
+      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;5;5;1.5;1.5" keyTimes="0;0.16;0.17;0.24;0.25;1"/>
+    </rect>
+    <text x="390" y="205" class="ti" text-anchor="middle">Supervisor</text>
+    <text x="390" y="224" class="si" text-anchor="middle">enough found?</text>
+  </g>
+  <text x="390" y="268" class="m" text-anchor="middle">unextracted 'shall'</text>
+
+  <g>
+    <rect x="500" y="70" width="140" height="68" rx="8" class="box" stroke-dasharray="5 4"/>
+    <text x="570" y="99" class="t" text-anchor="middle">LLM extract</text>
+    <text x="570" y="118" class="s" text-anchor="middle">Gemini, 8-page chunks</text>
   </g>
 
   <g>
-    <rect x="540" y="176" width="132" height="68" rx="8" class="box">
-      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4;1.5;1.5" keyTimes="0;0.35;0.37;0.45;0.47;1"/>
+    <rect x="680" y="176" width="130" height="68" rx="8" class="box">
+      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4;1.5;1.5" keyTimes="0;0.32;0.33;0.40;0.41;1"/>
     </rect>
-    <text x="606" y="205" class="t" text-anchor="middle">Vague check</text>
-    <text x="606" y="224" class="s" text-anchor="middle">word rules</text>
+    <text x="745" y="205" class="t" text-anchor="middle">Vague check</text>
+    <text x="745" y="224" class="s" text-anchor="middle">word rules</text>
   </g>
 
-  <rect x="714" y="150" width="172" height="202" rx="10" fill="#FAFAFA" stroke="#525252" stroke-width="1.5" stroke-dasharray="6 4"/>
-  <rect x="730" y="141" width="140" height="18" rx="4" fill="#FFFFFF" stroke="#525252" stroke-width="1.2"/>
-  <text x="800" y="154" class="l" text-anchor="middle" style="fill:#111111">LLAMAINDEX AGENT</text>
+  <rect x="850" y="150" width="172" height="202" rx="10" fill="#FAFAFA" stroke="#525252" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <rect x="866" y="141" width="140" height="18" rx="4" fill="#FFFFFF" stroke="#525252" stroke-width="1.2"/>
+  <text x="936" y="154" class="l" text-anchor="middle" style="fill:#111111">LLAMAINDEX AGENT</text>
   <g>
-    <rect x="730" y="176" width="140" height="68" rx="8" class="box">
-      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4;1.5;1.5" keyTimes="0;0.51;0.53;0.69;0.71;1"/>
+    <rect x="866" y="176" width="140" height="68" rx="8" class="box">
+      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4;1.5;1.5" keyTimes="0;0.44;0.45;0.58;0.59;1"/>
     </rect>
-    <text x="800" y="205" class="t" text-anchor="middle">Conflict agent</text>
-    <text x="800" y="224" class="s" text-anchor="middle">Gemini decides</text>
+    <text x="936" y="205" class="t" text-anchor="middle">Conflict agent</text>
+    <text x="936" y="224" class="s" text-anchor="middle">Gemini decides</text>
   </g>
-  <line x1="780" y1="246" x2="780" y2="284" class="edge flow" marker-end="url(#arrow)"/>
-  <line x1="820" y1="284" x2="820" y2="246" class="edge flow" marker-end="url(#arrow)"/>
+  <line x1="916" y1="246" x2="916" y2="284" class="edge flow" marker-end="url(#arrow)"/>
+  <line x1="956" y1="284" x2="956" y2="246" class="edge flow" marker-end="url(#arrow)"/>
   <circle r="4" fill="#111111">
-    <animateMotion dur="1.6s" repeatCount="indefinite" path="M780 248 L780 282 L820 282 L820 248 Z"/>
+    <animateMotion dur="1.6s" repeatCount="indefinite" path="M916 248 L916 282 L956 282 L956 248 Z"/>
   </circle>
   <g>
-    <path d="M748 292 L748 334 A52 9 0 0 0 852 334 L852 292" class="box"/>
-    <ellipse cx="800" cy="292" rx="52" ry="9" class="box"/>
-    <text x="800" y="315" class="s" text-anchor="middle">semantic index</text>
-    <text x="800" y="330" class="s" text-anchor="middle">embeddings</text>
+    <path d="M884 292 L884 334 A52 9 0 0 0 988 334 L988 292" class="box"/>
+    <ellipse cx="936" cy="292" rx="52" ry="9" class="box"/>
+    <text x="936" y="315" class="s" text-anchor="middle">semantic index</text>
+    <text x="936" y="330" class="s" text-anchor="middle">embeddings</text>
   </g>
-  <text x="704" y="268" class="m" text-anchor="end">find_related()</text>
+  <text x="840" y="268" class="m" text-anchor="end">find_related()</text>
 
   <g>
-    <rect x="930" y="176" width="132" height="68" rx="8" class="box" stroke-dasharray="5 4">
-      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4;1.5;1.5" keyTimes="0;0.75;0.77;0.89;0.91;1"/>
+    <rect x="1070" y="176" width="130" height="68" rx="8" class="sup">
+      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;5;5;1.5;1.5" keyTimes="0;0.62;0.63;0.70;0.71;1"/>
     </rect>
-    <text x="996" y="205" class="t" text-anchor="middle">Engineer review</text>
-    <text x="996" y="224" class="s" text-anchor="middle">approve / reject</text>
+    <text x="1135" y="205" class="ti" text-anchor="middle">Supervisor</text>
+    <text x="1135" y="224" class="si" text-anchor="middle">verify conflicts</text>
   </g>
-  <text x="996" y="268" class="m" text-anchor="middle">✓  ✕</text>
+  <text x="1135" y="268" class="m" text-anchor="middle">keep / drop</text>
 
   <g>
-    <rect x="1100" y="176" width="112" height="68" rx="8" class="box">
-      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4" keyTimes="0;0.95;0.97;1"/>
+    <rect x="1240" y="176" width="132" height="68" rx="8" class="box" stroke-dasharray="5 4">
+      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4;1.5;1.5" keyTimes="0;0.74;0.75;0.88;0.89;1"/>
     </rect>
-    <text x="1156" y="205" class="t" text-anchor="middle">Report</text>
-    <text x="1156" y="224" class="s" text-anchor="middle">SQLite history</text>
+    <text x="1306" y="205" class="t" text-anchor="middle">Engineer review</text>
+    <text x="1306" y="224" class="s" text-anchor="middle">approve / reject</text>
+  </g>
+  <text x="1306" y="268" class="m" text-anchor="middle">✓  ✕</text>
+
+  <g>
+    <rect x="1412" y="176" width="112" height="68" rx="8" class="box">
+      <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4" keyTimes="0;0.92;0.93;1"/>
+    </rect>
+    <text x="1468" y="205" class="t" text-anchor="middle">Report</text>
+    <text x="1468" y="224" class="s" text-anchor="middle">SQLite history</text>
   </g>
 
-  <circle r="7" fill="#111111">
-    <animateMotion dur="9s" repeatCount="indefinite" keyPoints="0;0.088;0.088;0.456;0.456;0.640;0.640;0.835;0.835;1;1" keyTimes="0;0.06;0.16;0.36;0.46;0.52;0.70;0.76;0.90;0.96;1" calcMode="linear" path="M67 210 L1096 210"/>
+  <circle r="7" fill="#111111" stroke="#FFFFFF" stroke-width="2">
+    <animateMotion dur="9s" repeatCount="indefinite" keyPoints="0;0.110;0.110;0.241;0.241;0.506;0.506;0.648;0.648;0.796;0.796;0.924;0.924;1;1" keyTimes="0;0.05;0.12;0.16;0.24;0.32;0.40;0.44;0.58;0.62;0.70;0.74;0.88;0.92;1" calcMode="linear" path="M67 210 L1408 210"/>
   </circle>
 
-  <text x="28" y="384" class="s">The dot follows one specification through the workflow. The agent loops over the index for every requirement it checks, and the workflow pauses until the engineer has decided.</text>
+  <text x="28" y="384" class="s">The dot follows one specification through the workflow. Black boxes are supervisor decisions made by Gemini, with a rule fallback when no model answers. The workflow pauses until the engineer has decided.</text>
 </svg>
