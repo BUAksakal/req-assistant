@@ -1,7 +1,7 @@
 [project]
 name = "reqlens"
-version = "0.1.0"
-description = "Requirements analysis for the automotive industry: extract requirements from PDF specifications and find conflicts and ambiguity."
+version = "1.0.0"
+description = "AI agents that review automotive requirements: extract requirements from PDF specifications and find conflicts and vague wording."
 readme = "README.md"
 authors = [
     { name = "Berke Aksakal", email = "141648712+BUAksakal@users.noreply.github.com" }
