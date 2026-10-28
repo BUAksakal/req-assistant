@@ -14,6 +14,10 @@ from reqlens.ai_parser import MAX_PAGES
 ROOT = Path(__file__).parent
 LOGO = ROOT / "docs" / "assets" / "logo.svg"
 MAX_MB = 20
+# The demo is public and runs on the free Gemini tier. These limits keep one
+# visitor, or a bot that reloads the page, from using up the daily quota.
+SESSION_LIMIT = 3
+DAILY_LIMIT = 25
 
 GUIDE = [
     (
@@ -441,7 +445,7 @@ def show_done() -> None:
     st.code(state.report, language=None)
     if st.button("Analyze another document", type="primary"):
         for key in list(state.keys()):
-            if key != "my_runs":
+            if key not in ("my_runs", "analyses_started"):
                 del state[key]
         st.rerun()
 
@@ -470,8 +474,30 @@ def pdf_problem(name: str, data: bytes) -> str | None:
     return None
 
 
+def left_in_session() -> int:
+    return SESSION_LIMIT - st.session_state.get("analyses_started", 0)
+
+
+def limit_reached() -> str | None:
+    """Say why no new analysis can start, or None."""
+    from reqlens.storage import analyses_today, connect
+
+    if left_in_session() <= 0:
+        return (
+            f"You have used the {SESSION_LIMIT} analyses of this demo session. "
+            "Run ReqLens locally for more, see GitHub."
+        )
+    if analyses_today(connect()) >= DAILY_LIMIT:
+        return (
+            f"The demo has reached today's limit of {DAILY_LIMIT} analyses. "
+            "Please come back tomorrow, or run ReqLens locally."
+        )
+    return None
+
+
 def start_page() -> Path | None:
     """Explain how to use ReqLens and return the uploaded PDF once Analyze is clicked."""
+    from reqlens.storage import connect, record_analysis
 
     st.html(
         '<div class="eyebrow"><i></i>Requirements review · v1.0 demo</div>'
@@ -492,7 +518,7 @@ def start_page() -> Path | None:
     with left, st.container(border=True):
         st.html(
             '<div class="card-head"><b>Specification</b>'
-            "<span>one PDF per analysis</span></div>"
+            f"<span>{left_in_session()} of {SESSION_LIMIT} analyses left</span></div>"
         )
         uploaded = st.file_uploader(
             "Specification PDF", type="pdf", label_visibility="collapsed"
@@ -501,7 +527,9 @@ def start_page() -> Path | None:
             f'<div class="limits">PDF · max. <b>{MAX_PAGES} pages</b> · <b>{MAX_MB} MB</b>'
             " · text-based, any ID format (AEB-001, [SWS_Std_00011], 5.2.1)</div>"
         )
-        problem = uploaded and pdf_problem(uploaded.name, uploaded.getvalue())
+        problem = limit_reached() or (
+            uploaded and pdf_problem(uploaded.name, uploaded.getvalue())
+        )
         if problem:
             st.html(f'<div class="err">⚠ {problem}</div>')
         if st.button(
@@ -510,6 +538,10 @@ def start_page() -> Path | None:
             disabled=uploaded is None or bool(problem),
             width="stretch",
         ):
+            record_analysis(connect())
+            st.session_state.analyses_started = (
+                st.session_state.get("analyses_started", 0) + 1
+            )
             path = Path(tempfile.mkdtemp()) / uploaded.name
             path.write_bytes(uploaded.getvalue())
 

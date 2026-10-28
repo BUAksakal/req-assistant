@@ -189,6 +189,8 @@ Saved as run #1 in reqlens.db
 | **Secrets** | The Gemini key lives in the platform's secret store, never in the code or the repository |
 | **Container** | The same app ships as a Docker image, ready for any container host (AWS, Azure, on-premise) |
 | **CI** | GitHub Actions runs ruff and pytest on every pull request |
+| **Abuse protection** | At most 3 analyses per visitor session and 25 per day for all visitors together, counted in SQLite, so a bot that reloads the page cannot use up the free Gemini quota |
+| **Privacy** | Each visitor only sees their own analyses. Uploaded file names and requirement IDs are escaped before they are shown, and every SQL query is parameterized |
 
 ## Tech stack
 
