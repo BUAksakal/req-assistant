@@ -55,3 +55,16 @@ def approval_rate(conn: sqlite3.Connection) -> float:
         "SELECT SUM(approved), COUNT(*) FROM findings"
     ).fetchone()
     return approved / total if total else 0.0
+
+
+def list_runs(conn: sqlite3.Connection) -> list[tuple]:
+    """One row per analysis: id, date, pdf, requirements, findings, approved."""
+    return conn.execute(
+        """
+        SELECT r.id, r.created_at, r.pdf, r.requirement_count,
+               COUNT(f.id), COALESCE(SUM(f.approved), 0)
+        FROM runs r LEFT JOIN findings f ON f.run_id = r.id
+        GROUP BY r.id
+        ORDER BY r.id
+        """
+    ).fetchall()

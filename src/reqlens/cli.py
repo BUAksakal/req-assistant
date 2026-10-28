@@ -4,6 +4,7 @@ from typing import Annotated
 import typer
 
 from reqlens.pdf_reader import extract_requirements
+from reqlens.storage import connect, save_run
 
 app = typer.Typer(help="ReqLens: requirements analysis for the automotive industry.")
 
@@ -48,3 +49,24 @@ def analyze(
 
     result = workflow.invoke(Command(resume=approved), config)
     typer.echo("\n" + result["report"])
+
+    run_id = save_run(
+        connect(), pdf.name, len(result["requirements"]), findings, approved
+    )
+    typer.echo(f"Saved as run #{run_id} in reqlens.db")
+
+
+@app.command()
+def history(
+    db: Annotated[Path, typer.Option(help="Database file.")] = Path("reqlens.db"),
+) -> None:
+    """Show past analyses and how many findings engineers approved."""
+    from reqlens.storage import approval_rate, connect, list_runs
+
+    conn = connect(db)
+    for run_id, created, pdf_name, reqs, total, approved in list_runs(conn):
+        typer.echo(
+            f"#{run_id}  {created}  {pdf_name}  {reqs} requirements  "
+            f"{approved}/{total} findings approved"
+        )
+    typer.echo(f"\nOverall approval rate: {approval_rate(conn):.0%}")
