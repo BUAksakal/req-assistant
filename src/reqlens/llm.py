@@ -25,12 +25,24 @@ def get_embed_model() -> GoogleGenAIEmbedding:
     return GoogleGenAIEmbedding(model_name=EMBED_MODEL)
 
 
+_last_working = 0
+
+
 def call_with_fallback[T](fn: Callable[[str], T], attempts: int = 2) -> T:
-    """Call fn(model) and switch to the next model when one is busy (503/429)."""
-    for model in MODELS:
+    """Call fn(model) and switch to the next model when one is busy (503/429).
+
+    Starts with the model that answered last time, so a busy model is not
+    retried for every single call.
+    """
+    global _last_working
+    order = list(range(_last_working, len(MODELS))) + list(range(_last_working))
+    for index in order:
+        model = MODELS[index]
         for attempt in range(1, attempts + 1):
             try:
-                return fn(model)
+                result = fn(model)
+                _last_working = index
+                return result
             except (errors.ClientError, errors.ServerError) as error:
                 if error.code not in RETRY_CODES:
                     raise
