@@ -6,11 +6,79 @@ import uuid
 from pathlib import Path
 
 import pandas as pd
+import pymupdf
 import streamlit as st
+
+from reqlens.ai_parser import MAX_PAGES
 
 ROOT = Path(__file__).parent
 LOGO = ROOT / "docs" / "assets" / "logo.svg"
-WORKFLOW = ROOT / "docs" / "assets" / "reqlens-agent-flow.svg"
+MAX_MB = 20
+
+GUIDE = [
+    (
+        "Choose your PDF",
+        f"A text-based specification, up to {MAX_PAGES} pages. Any ID format works.",
+    ),
+    (
+        "Click Analyze",
+        "No settings to choose. A 10-page document takes about a minute.",
+    ),
+    (
+        "Watch the agents",
+        "A live view shows every step and what the agents search for.",
+    ),
+    (
+        "Decide",
+        (
+            "Approve the real problems, reject false alarms. "
+            "The agents can be wrong, so every finding waits for you."
+        ),
+    ),
+]
+STEPS = [
+    (
+        "Read and extract",
+        "PyMuPDF reads the text, a regex looks for IDs like AEB-001.",
+        "rules",
+    ),
+    (
+        "Enough found?",
+        "Looks for 'shall' sentences the regex missed and decides the next step.",
+        "supervisor agent",
+    ),
+    ("LLM extraction", "Only if needed: Gemini reads the PDF in 8-page chunks.", "llm"),
+    (
+        "Vague wording",
+        "Words like fast or sufficient are flagged, they cannot be tested.",
+        "rules",
+    ),
+    (
+        "Conflict search",
+        "Searches related requirements for every one and compares their values.",
+        "conflict agent",
+    ),
+    (
+        "Verification",
+        "A second look at every conflict. Clear false alarms are dropped.",
+        "supervisor agent",
+    ),
+    (
+        "Your review",
+        "The workflow pauses until you approve or reject each finding.",
+        "you",
+    ),
+    (
+        "Report",
+        "Findings and your decisions are stored, so precision can be measured.",
+        "sqlite",
+    ),
+]
+
+FONTS = (
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;'
+    '500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">'
+)
 
 NODES = [
     ("classic_extract", "Classic extract", "regex"),
@@ -67,6 +135,91 @@ CSS = """
                      100% {box-shadow: 0 0 0 0 rgba(17, 17, 17, 0);}}
 @keyframes rl-flowing {to {background-position: 20px 0;}}
 @keyframes rl-blink {50% {opacity: 0;}}
+
+body, p, div, label, button, input {font-family: Inter, sans-serif;}
+header[data-testid="stHeader"] {border-bottom: 1px solid #E5E5E5;}
+[data-testid="stTopNav"] {justify-content: flex-end; padding-right: 1.5rem;}
+[data-testid="stTopNavLink"] {background: transparent; color: #737373; font-size: 13.5px;}
+[data-testid="stTopNavLink"]:hover {background: transparent; color: #111111;}
+[data-testid="stTopNavLink"], [data-testid="stTopNavLink"] * {text-decoration: none !important;
+    border-bottom: none !important; box-shadow: none !important;}
+[data-testid="stTopNavLink"][aria-current="page"] {background: transparent; color: #111111;
+    font-weight: 600;}
+.block-container {max-width: min(1720px, 96vw); padding-left: 2.5rem; padding-right: 2.5rem;}
+.mono {font-family: "JetBrains Mono", monospace;}
+.eyebrow {font: 500 11px "JetBrains Mono", monospace; letter-spacing: .14em; color: #737373;
+          text-transform: uppercase; display: flex; align-items: center; gap: 8px;}
+.eyebrow i {width: 7px; height: 7px; border-radius: 50%; background: #111111;}
+h1.title {font-size: 32px; font-weight: 600; letter-spacing: -.02em; margin: 6px 0 4px;
+          color: #111111; padding: 0;}
+p.lead {color: #737373; font-size: 16px; max-width: 720px; margin: 0 0 28px; line-height: 1.6;}
+.sec {font: 600 11px "JetBrains Mono", monospace; letter-spacing: .12em;
+      text-transform: uppercase; color: #737373; margin: 0 2px 10px;}
+.guide {display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid #E5E5E5;
+        border-radius: 10px; margin: 0 0 32px; background: #FFFFFF;}
+.g {padding: 20px 22px; border-right: 1px solid #E5E5E5;}
+.g:last-child {border-right: none;}
+.g .c {display: inline-flex; width: 22px; height: 22px; border: 1.5px solid #111111;
+       border-radius: 50%; align-items: center; justify-content: center;
+       font: 600 10px "JetBrains Mono", monospace;}
+.g .t {font-weight: 600; font-size: 16px; margin-top: 10px; color: #111111;}
+.g .d {font-size: 13.5px; color: #737373; margin-top: 3px; line-height: 1.5;}
+.card-head {display: flex; justify-content: space-between; align-items: center;
+            background: #FAFAFA; border-radius: 6px; padding: 9px 12px; margin-bottom: 14px;}
+.card-head b {font: 600 12px "JetBrains Mono", monospace; letter-spacing: .06em;
+              text-transform: uppercase;}
+.card-head span {font: 11px "JetBrains Mono", monospace; color: #737373;}
+[data-testid="stFileUploaderDropzone"] {border: 1.5px dashed #A3A3A3; background: #FAFAFA;
+                                        border-radius: 8px; padding: 42px 24px;}
+[data-testid="stFileUploaderDropzone"]:hover {border-color: #111111;}
+[data-testid="stFileUploaderDropzone"] button {background: #111111; color: #FFFFFF; border: none;}
+[data-testid="stFileUploaderDropzoneInstructions"] span {display: none;}
+[data-testid="stFileUploaderDropzoneInstructions"]::after {
+    content: "Drop a specification PDF here"; color: #525252; font-size: 14px;}
+.limits {font: 12px "JetBrains Mono", monospace; color: #737373; margin: 10px 0 16px;}
+.limits b {color: #111111; font-weight: 600;}
+.file {display: flex; justify-content: space-between; border: 1px solid #E5E5E5;
+       border-radius: 6px; padding: 10px 12px; margin-bottom: 12px;
+       font: 13px "JetBrains Mono", monospace;}
+.file span + span {color: #737373;}
+.err {border: 1px solid #111111; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px;
+      font-size: 13px;}
+.rh {display: flex; justify-content: space-between; font: 600 11px "JetBrains Mono", monospace;
+     letter-spacing: .1em; text-transform: uppercase; color: #737373; margin: 2px 2px 10px;}
+.run {border: 1px solid #E5E5E5; border-radius: 8px; padding: 16px 18px; margin-bottom: 8px;}
+.run .top {display: flex; justify-content: space-between; gap: 8px;}
+.run .name {font: 500 14px "JetBrains Mono", monospace; color: #111111; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;}
+.run .when {font: 11px "JetBrains Mono", monospace; color: #737373; white-space: nowrap;}
+.run .stats {font-size: 13px; color: #737373; margin-top: 6px;}
+.pill {display: inline-block; font: 500 10px "JetBrains Mono", monospace; background: #F0F0F0;
+       border-radius: 4px; padding: 2px 7px; margin-top: 8px; color: #111111;}
+.empty {border: 1px dashed #E5E5E5; border-radius: 8px; padding: 22px; color: #737373;
+        font-size: 13px; text-align: center;}
+.pipe-head {display: flex; justify-content: space-between; margin: 48px 0 14px;
+            padding-top: 28px; border-top: 1px solid #E5E5E5;
+            font: 600 11px "JetBrains Mono", monospace; letter-spacing: .12em;
+            text-transform: uppercase; color: #737373;}
+.pipe {display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; background: #FAFAFA;
+       border-radius: 10px; padding: 22px;}
+.step {background: #FFFFFF; border: 1px solid #E5E5E5; border-radius: 8px; padding: 18px;
+       animation: rl-step 16s infinite; animation-delay: calc(var(--i) * 2s - 2s);}
+@keyframes rl-step {
+    0%, 12.5% {border-color: #111111; box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.12);
+               transform: translateY(-3px);}
+    14%, 100% {border-color: #E5E5E5; box-shadow: none; transform: none;}}
+.step .top {display: flex; justify-content: space-between; align-items: center;}
+.step .n {display: inline-flex; width: 24px; height: 24px; border-radius: 4px;
+          background: #111111; color: #FFFFFF; align-items: center; justify-content: center;
+          font: 500 10px "JetBrains Mono", monospace;}
+.step .t {font: 600 13.5px "JetBrains Mono", monospace; margin-top: 12px; color: #111111;}
+.step .d {font-size: 13px; color: #737373; margin-top: 3px; line-height: 1.5;}
+.who {font: 600 9px "JetBrains Mono", monospace; letter-spacing: .08em;
+      text-transform: uppercase; border: 1px solid #E5E5E5; border-radius: 3px;
+      padding: 2px 6px; color: #737373;}
+.who.agent {background: #111111; border-color: #111111; color: #FFFFFF;}
+.who.you {border-color: #111111; color: #111111;}
+@media (max-width: 760px) {.pipe, .guide {grid-template-columns: 1fr 1fr;}}
 </style>
 """
 
@@ -270,7 +423,12 @@ def show_review() -> None:
         state.console.append(
             f"✓ {len(approved)} finding(s) approved, saved as run #{run_id}"
         )
-        state.update(stage="done", report=result["report"], run_id=run_id)
+        state.update(
+            stage="done",
+            report=result["report"],
+            run_id=run_id,
+            my_runs=[*state.get("my_runs", []), run_id],
+        )
         st.rerun()
 
 
@@ -283,12 +441,117 @@ def show_done() -> None:
     st.code(state.report, language=None)
     if st.button("Analyze another document", type="primary"):
         for key in list(state.keys()):
-            del state[key]
+            if key != "my_runs":
+                del state[key]
         st.rerun()
 
 
+def pdf_problem(name: str, data: bytes) -> str | None:
+    """Show the chosen file and say why it cannot be analysed, before any LLM call."""
+    try:
+        with pymupdf.open(stream=data, filetype="pdf") as doc:
+            pages = doc.page_count
+            has_text = any(page.get_text().strip() for page in doc)
+    except pymupdf.FileDataError:
+        return "This file could not be read as a PDF."
+    size = len(data) / 1024
+    size = f"{size:.0f} KB" if size < 1024 else f"{size / 1024:.1f} MB"
+    st.html(
+        f'<div class="file"><span>▤ {html.escape(name)}</span>'
+        f"<span>{pages} pages · {size}</span></div>"
+    )
+    if pages > MAX_PAGES:
+        return (
+            f"This PDF has {pages} pages. ReqLens reads at most {MAX_PAGES} pages, "
+            "please split it."
+        )
+    if not has_text:
+        return "This PDF has no text layer. Scanned documents are not supported yet."
+    return None
+
+
+def start_page() -> Path | None:
+    """Explain how to use ReqLens and return the uploaded PDF once Analyze is clicked."""
+
+    st.html(
+        '<div class="eyebrow"><i></i>Requirements review · v1.0 demo</div>'
+        '<h1 class="title">Analyze a specification</h1>'
+        '<p class="lead">Upload a requirements PDF. AI agents extract the requirements, '
+        "flag vague wording and look for contradictions. You make the final call.</p>"
+        '<div class="sec">How to use ReqLens</div><div class="guide">'
+        + "".join(
+            f'<div class="g"><span class="c">{i}</span><div class="t">{title}</div>'
+            f'<div class="d">{text}</div></div>'
+            for i, (title, text) in enumerate(GUIDE, start=1)
+        )
+        + "</div>"
+    )
+
+    path = None
+    left, right = st.columns([7, 5], gap="large")
+    with left, st.container(border=True):
+        st.html(
+            '<div class="card-head"><b>Specification</b>'
+            "<span>one PDF per analysis</span></div>"
+        )
+        uploaded = st.file_uploader(
+            "Specification PDF", type="pdf", label_visibility="collapsed"
+        )
+        st.html(
+            f'<div class="limits">PDF · max. <b>{MAX_PAGES} pages</b> · <b>{MAX_MB} MB</b>'
+            " · text-based, any ID format (AEB-001, [SWS_Std_00011], 5.2.1)</div>"
+        )
+        problem = uploaded and pdf_problem(uploaded.name, uploaded.getvalue())
+        if problem:
+            st.html(f'<div class="err">⚠ {problem}</div>')
+        if st.button(
+            "Analyze specification",
+            type="primary",
+            disabled=uploaded is None or bool(problem),
+            width="stretch",
+        ):
+            path = Path(tempfile.mkdtemp()) / uploaded.name
+            path.write_bytes(uploaded.getvalue())
+
+    with right:
+        st.html(
+            '<div class="rh"><span>Recent analyses</span><span>this session</span></div>'
+        )
+        runs = my_runs()[-3:][::-1]
+        if not runs:
+            st.html(
+                '<div class="empty">No analyses in this session yet.<br>'
+                "Only you can see your runs.</div>"
+            )
+        for _, created, pdf_name, reqs, total, approved in runs:
+            st.html(
+                f'<div class="run"><div class="top">'
+                f'<span class="name">{html.escape(pdf_name)}</span>'
+                f'<span class="when">{created[:16].replace("T", " ")}</span></div>'
+                f'<div class="stats">{reqs} requirements · {total} findings</div>'
+                f'<span class="pill">{approved}/{total} approved</span></div>'
+            )
+    return path
+
+
+def system_steps() -> None:
+    """What happens inside ReqLens, with who does each step."""
+    kinds = {"supervisor agent": "agent", "conflict agent": "agent", "you": "you"}
+    st.html(
+        '<div class="pipe-head"><span>Inside ReqLens, after you click Analyze</span>'
+        '<span>LangGraph workflow · 2 agents</span></div><div class="pipe">'
+        + "".join(
+            f'<div class="step {kinds.get(who, "")}" style="--i: {i}">'
+            f'<div class="top"><span class="n">{i:02d}</span>'
+            f'<span class="who {kinds.get(who, "")}">{who}</span></div>'
+            f'<div class="t">{title}</div><div class="d">{text}</div></div>'
+            for i, (title, text, who) in enumerate(STEPS, start=1)
+        )
+        + "</div>"
+    )
+
+
 def analyze_page() -> None:
-    st.markdown("### Analyze specification")
     stage = st.session_state.get("stage")
     if stage == "review":
         show_review()
@@ -296,84 +559,30 @@ def analyze_page() -> None:
     if stage == "done":
         show_done()
         return
-
-    from reqlens.storage import connect, list_runs
-
-    st.caption(
-        "Upload a specification PDF. ReqLens extracts the requirements, flags vague "
-        "wording and lets an AI agent look for contradicting requirements. "
-        "You make the final call."
-    )
-    path = None
-    upload, recent = st.columns([3, 2], gap="large")
-    with upload, st.container(border=True):
-        st.markdown("**Upload specification**")
-        uploaded = st.file_uploader(
-            "Specification PDF", type="pdf", label_visibility="collapsed"
-        )
-        st.caption(
-            "Text-based PDF. Requirement IDs in any format, "
-            "for example AEB-001 or [SWS_Std_00011]."
-        )
-        if st.button("Analyze", type="primary", disabled=uploaded is None):
-            path = Path(tempfile.mkdtemp()) / uploaded.name
-            path.write_bytes(uploaded.getvalue())
-    with recent, st.container(border=True):
-        st.markdown("**Recent analyses**")
-        runs = list_runs(connect())[-4:][::-1]
-        if not runs:
-            st.caption("No analyses yet. Your reviewed runs will appear here.")
-        for run_id, created, pdf_name, reqs, total, approved in runs:
-            st.markdown(f"`#{run_id}` **{pdf_name}**")
-            st.caption(
-                f"{created[:10]} · {reqs} requirements · "
-                f"{approved}/{total} findings approved"
-            )
-
+    path = start_page()
     if path:
         run_analysis(path)
+    system_steps()
 
-    st.markdown("#### What ReqLens checks")
-    checks = [
-        (
-            ":material/description: Extraction",
-            (
-                "Finds every requirement with its ID, text and page. Rules first, "
-                "the LLM only when the ID format is unknown."
-            ),
-        ),
-        (
-            ":material/help: Ambiguity",
-            (
-                "Flags vague wording such as *fast*, *about* or *sufficient* "
-                "that cannot be tested."
-            ),
-        ),
-        (
-            ":material/compare_arrows: Conflicts",
-            (
-                "A LlamaIndex agent searches related requirements and reports "
-                "contradicting values, with a reason."
-            ),
-        ),
-    ]
-    for col, (title, text) in zip(st.columns(3), checks):
-        with col, st.container(border=True, height="stretch"):
-            st.markdown(f"**{title}**")
-            st.caption(text)
 
-    st.markdown("#### How it works")
-    st.image(str(WORKFLOW), width="stretch")
+def my_runs() -> list[tuple]:
+    """Runs saved in this browser session.
+
+    The demo is public, so a visitor must never see the documents that other
+    visitors analysed. Every run is still stored for the measured precision.
+    """
+    from reqlens.storage import connect, list_runs
+
+    mine = set(st.session_state.get("my_runs", []))
+    return [row for row in list_runs(connect()) if row[0] in mine]
 
 
 def history_page() -> None:
-    from reqlens.storage import approval_rate, connect, list_runs
-
     st.markdown("### History")
-    conn = connect()
-    rows = list_runs(conn)
+    st.caption("Only the analyses from this browser session are shown.")
+    rows = my_runs()
     if not rows:
-        st.info("No analyses yet. Run one on the Analyze page.")
+        st.info("No analyses in this session yet. Run one on the Analyze page.")
         return
 
     runs = pd.DataFrame(
@@ -387,7 +596,7 @@ def history_page() -> None:
     cols[1].metric("Findings reviewed", int(runs["Findings"].sum()))
     cols[2].metric(
         "Approval rate",
-        f"{approval_rate(conn):.0%}",
+        f"{runs['Approved'].sum() / max(runs['Findings'].sum(), 1):.0%}",
         help="Share of agent findings that engineers confirmed as real problems.",
     )
     st.bar_chart(
@@ -402,6 +611,7 @@ def history_page() -> None:
 
 st.set_page_config(page_title="ReqLens", page_icon=":material/search:", layout="wide")
 st.logo(str(LOGO), size="large")
+st.html(FONTS)
 st.markdown(CSS, unsafe_allow_html=True)
 page = st.navigation(
     [
@@ -409,9 +619,7 @@ page = st.navigation(
         st.Page(
             history_page, title="History", icon=":material/history:", url_path="history"
         ),
-    ]
+    ],
+    position="top",
 )
-with st.sidebar:
-    st.caption("Requirements analysis for the automotive industry")
-    st.markdown("[GitHub](https://github.com/BUAksakal/reqlens)")
 page.run()
