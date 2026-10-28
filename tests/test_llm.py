@@ -33,3 +33,19 @@ def test_all_models_busy_raises_a_clear_error():
 
     with pytest.raises(llm.LLMUnavailableError):
         llm.call_with_fallback(fn)
+
+
+def test_models_that_do_not_exist_are_skipped_without_waiting():
+    gone = errors.ClientError(
+        404, {"error": {"code": 404, "status": "NOT_FOUND"}}, None
+    )
+    calls = []
+
+    def fn(model):
+        calls.append(model)
+        if model == llm.MODELS[0]:
+            raise gone
+        return "ok"
+
+    assert llm.call_with_fallback(fn) == "ok"
+    assert calls == [llm.MODELS[0], llm.MODELS[1]]

@@ -21,9 +21,16 @@ def parse(
 ) -> None:
     """Extract requirements from a specification PDF."""
     if ai:
-        from reqlens.ai_parser import extract_requirements_ai
+        from reqlens.ai_parser import extract_with_cache
+        from reqlens.llm import LLMUnavailableError
 
-        requirements = extract_requirements_ai(pdf)
+        try:
+            requirements = extract_with_cache(pdf)
+        except LLMUnavailableError as error:
+            typer.echo(
+                f"\n{error} Finished pages are cached and will not be asked again."
+            )
+            raise typer.Exit(1)
     else:
         requirements = extract_requirements(pdf)
     for req in requirements:
