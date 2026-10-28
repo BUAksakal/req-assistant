@@ -50,6 +50,10 @@ Car makers send their suppliers specifications (*Lastenhefte*) with hundreds of 
 
 These problems are usually written by different teams, end up 40 pages apart and are found months later, during testing. ReqLens finds them in minutes and lets the engineer decide.
 
+<p align="center">
+  <img src="docs/assets/reqlens-before-after.svg" alt="Two engineers at their desks. Without ReqLens: copying requirements from the PDF into a spreadsheet and comparing 91 pairs by eye. With ReqLens: the review screen with 2 findings to approve, 45 times fewer checks" width="100%">
+</p>
+
 ## How it works
 
 <p align="center">
