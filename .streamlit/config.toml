@@ -21,6 +21,10 @@ codeBackgroundColor = "#F0F0F0"
 backgroundColor = "#FAFAFA"
 secondaryBackgroundColor = "#F0F0F0"
 
+[server]
+# Specifications are text PDFs; 20 MB is far more than 60 pages need.
+maxUploadSize = 20
+
 [client]
 toolbarMode = "minimal"
 

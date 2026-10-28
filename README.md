@@ -142,8 +142,9 @@ Being honest about what does not work yet:
 - **Ambiguity** uses a word list and misses phrases like *"clearly perceptible"* or *"as far as possible"*.
 - **Tables** are flattened by PyMuPDF, so requirements defined in tables come out as messy text.
 - **LLM answers vary** between runs, and the conflict agent occasionally reports a plausible but wrong conflict. That is why the engineer review exists.
-- **Free Gemini tier** is limited (few requests per day, frequent `503`). ReqLens retries automatically, but a full analysis can take minutes.
-- The analysis has so far been measured on the example specification only. Evaluation on real AEB documents is next.
+- **Free Gemini tier** is limited (few requests per day, frequent `503`). ReqLens switches between five models and caches every answer, but a full analysis can take minutes.
+- **Document size:** the LLM reads at most **60 pages** per document (9 requests) and uploads are capped at **20 MB**, so one file cannot use up the daily quota. Longer specifications have to be split.
+- Extraction has been measured on UN R152 (144 requirements, 97 of 99 numbered *shall* paragraphs). The conflict analysis has so far been measured on the example specification only.
 
 ## Roadmap
 

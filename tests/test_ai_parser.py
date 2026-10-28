@@ -1,5 +1,9 @@
+import pytest
+
 from reqlens import ai_parser
 from reqlens.ai_parser import (
+    MAX_PAGES,
+    DocumentTooLargeError,
     FoundRequirement,
     extract_with_cache,
     normalize_id,
@@ -50,3 +54,15 @@ def test_overlapping_chunks_keep_the_longer_text(tmp_path, monkeypatch):
 
     assert [(r.id, r.text) for r in found] == [("5.1", "The system shall brake.")]
     assert calls == [1, 8]
+
+
+def test_too_many_pages_are_refused_before_any_llm_call(tmp_path, monkeypatch):
+    pdf = tmp_path / "huge.pdf"
+    pdf.write_bytes(b"pdf")
+    monkeypatch.setattr(ai_parser, "read_pages", lambda path: ["p"] * (MAX_PAGES + 1))
+    calls = []
+    monkeypatch.setattr(ai_parser, "call_with_fallback", calls.append)
+
+    with pytest.raises(DocumentTooLargeError, match="split it"):
+        extract_with_cache(pdf, db=tmp_path / "test.db")
+    assert calls == []
