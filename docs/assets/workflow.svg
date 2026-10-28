@@ -20,8 +20,9 @@
   </defs>
 
   <rect x="1" y="1" width="1248" height="398" rx="14" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
-  <text x="28" y="40" class="l">LANGGRAPH WORKFLOW</text>
-  <rect x="140" y="30" width="1080" height="330" rx="12" fill="none" stroke="#E5E5E5" stroke-dasharray="4 4"/>
+  <rect x="140" y="30" width="1080" height="330" rx="12" fill="none" stroke="#525252" stroke-width="1.8" stroke-dasharray="8 6"/>
+  <rect x="158" y="21" width="168" height="20" rx="4" fill="#111111"/>
+  <text x="242" y="35" class="l" text-anchor="middle" fill="#FFFFFF" style="fill:#FFFFFF">LANGGRAPH WORKFLOW</text>
 
   <line x1="112" y1="210" x2="160" y2="210" class="edge flow" marker-end="url(#arrow)"/>
   <line x1="292" y1="210" x2="538" y2="210" class="edge flow" marker-end="url(#arrow)"/>
@@ -65,8 +66,9 @@
     <text x="606" y="224" class="s" text-anchor="middle">word rules</text>
   </g>
 
-  <rect x="714" y="150" width="172" height="202" rx="10" fill="#FAFAFA" stroke="#D4D4D4"/>
-  <text x="800" y="168" class="l" text-anchor="middle">LLAMAINDEX AGENT</text>
+  <rect x="714" y="150" width="172" height="202" rx="10" fill="#FAFAFA" stroke="#525252" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <rect x="730" y="141" width="140" height="18" rx="4" fill="#FFFFFF" stroke="#525252" stroke-width="1.2"/>
+  <text x="800" y="154" class="l" text-anchor="middle" style="fill:#111111">LLAMAINDEX AGENT</text>
   <g>
     <rect x="730" y="176" width="140" height="68" rx="8" class="box">
       <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1.5;1.5;4;4;1.5;1.5" keyTimes="0;0.51;0.53;0.69;0.71;1"/>
