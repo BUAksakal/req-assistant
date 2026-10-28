@@ -1,0 +1,14 @@
+# Secrets and private files never go into the image
+.env
+proje.md
+reqlens.db
+data/
+
+# Built or local-only
+.venv/
+.git/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.claude/
+.DS_Store

@@ -81,6 +81,13 @@ uv run reqlens history                                    # past runs and approv
 uv run streamlit run app.py                               # web interface
 ```
 
+Or run the web interface in Docker. The API key is passed at run time and never baked into the image:
+
+```bash
+docker build -t reqlens .
+docker run --rm -p 8501:8501 --env-file .env reqlens    # open http://localhost:8501
+```
+
 <details>
 <summary><b>Example session</b></summary>
 
