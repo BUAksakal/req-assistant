@@ -169,7 +169,7 @@ def verify_findings(state: State) -> State:
     """Supervisor decision 2: keep only the conflicts that hold up a second look."""
     from reqlens.cache import fingerprint, lookup, store
     from reqlens.llm import LLMUnavailableError, call_with_fallback
-    from reqlens.supervisor import Verdict, verify_conflict
+    from reqlens.supervisor import VERIFY_PROMPT, Verdict, verify_conflict
 
     progress = get_stream_writer()
     by_id = {req.id: req for req in state["requirements"]}
@@ -180,7 +180,9 @@ def verify_findings(state: State) -> State:
             verified[req_id] = claim
             continue
         first, second = by_id[req_id], by_id[others[0]]
-        key = f"verify:{fingerprint(f'{first.text}|{second.text}|{claim}')}"
+        # The prompt is part of the key: a changed prompt must not reuse old verdicts.
+        pair = f"{VERIFY_PROMPT.template}|{first.text}|{second.text}|{claim}"
+        key = f"verify:{fingerprint(pair)}"
         saved = lookup(key)
         if saved is None:
             try:
@@ -193,9 +195,18 @@ def verify_findings(state: State) -> State:
             saved = verdict.model_dump_json()
             store(key, saved)
         verdict = Verdict.model_validate_json(saved)
-        label = "confirmed" if verdict.confirmed else "rejected"
-        progress({"supervisor": f"{label} {req_id} ↔ {second.id}: {verdict.reason}"})
-        if verdict.confirmed:
+        label = {
+            "real": "confirmed",
+            "false_alarm": "rejected",
+            "unsure": "unsure, kept",
+        }
+        progress(
+            {
+                "supervisor": f"{label[verdict.verdict]} {req_id} ↔ {second.id}: "
+                f"{verdict.reason}"
+            }
+        )
+        if verdict.keep:
             verified[req_id] = claim
     return {"conflicts": verified}
 
