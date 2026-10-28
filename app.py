@@ -127,6 +127,8 @@ def run_analysis(pdf_path: Path) -> None:
             if mode == "custom":
                 if "checking" in chunk:
                     show(f"▶ agent checks {chunk['checking']}")
+                elif "cached" in chunk:
+                    show(f"✓ {chunk['cached']} answered from cache, no LLM call")
                 else:
                     hits = ", ".join(chunk["hits"][:3])
                     show(f'   find_related("{chunk["search"]}") → {hits}')

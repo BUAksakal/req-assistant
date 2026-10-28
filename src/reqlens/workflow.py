@@ -1,5 +1,7 @@
+import json
 import re
 from functools import partial
+from pathlib import Path
 from typing import TypedDict
 
 from langgraph.checkpoint.memory import InMemorySaver
@@ -28,10 +30,20 @@ def classic_extract(state: State) -> State:
 
 def ai_extract(state: State) -> State:
     from reqlens.ai_parser import extract_requirements_ai
+    from reqlens.cache import fingerprint, lookup, store
     from reqlens.llm import call_with_fallback
 
-    pdf = state["pdf"]
-    return {"requirements": call_with_fallback(partial(extract_requirements_ai, pdf))}
+    pdf = Path(state["pdf"])
+    key = f"extract:{fingerprint(pdf.read_bytes())}"
+    saved = lookup(key)
+    if saved is None:
+        found = call_with_fallback(partial(extract_requirements_ai, pdf))
+        saved = json.dumps([req.model_dump() for req in found])
+        store(key, saved)
+    requirements = [
+        Requirement(**{**item, "source": pdf.name}) for item in json.loads(saved)
+    ]
+    return {"requirements": requirements}
 
 
 def choose_extractor(state: State) -> str:
@@ -49,19 +61,30 @@ def check_vague(state: State) -> State:
 
 def check_conflicts(state: State) -> State:
     from reqlens.analysis_agent import make_conflict_checker
+    from reqlens.cache import fingerprint, lookup, store
     from reqlens.llm import call_with_fallback
 
     progress = get_stream_writer()
-    check = make_conflict_checker(
-        state["requirements"],
-        on_search=lambda query, hits: progress({"search": query, "hits": hits}),
-    )
+    requirements = state["requirements"]
+    document = fingerprint("\n".join(f"{r.id}|{r.text}" for r in requirements))
+    check = None
     conflicts = {}
-    for req in state["requirements"]:
+    for req in requirements:
         if not re.search(r"\d", req.text):
             continue
-        progress({"checking": req.id})
-        answer = call_with_fallback(partial(check, req.id))
+        key = f"conflict:{document}:{req.id}"
+        answer = lookup(key)
+        if answer is None:
+            if check is None:
+                check = make_conflict_checker(
+                    requirements,
+                    on_search=lambda q, hits: progress({"search": q, "hits": hits}),
+                )
+            progress({"checking": req.id})
+            answer = call_with_fallback(partial(check, req.id))
+            store(key, answer)
+        else:
+            progress({"cached": req.id})
         if "no conflict" not in answer.lower():
             conflicts[req.id] = answer
     return {"conflicts": conflicts}
