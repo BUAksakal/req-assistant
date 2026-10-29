@@ -80,6 +80,10 @@ def bench(
     fresh: Annotated[
         bool, typer.Option("--fresh", help="Ask every LLM answer again.")
     ] = False,
+    retrieval: Annotated[
+        bool,
+        typer.Option("--retrieval", help="Only measure search hit@k, no LLM answers."),
+    ] = False,
 ) -> None:
     """Score ReqLens on a benchmark specification with its answer key."""
     from reqlens.benchmark import SETS, as_markdown, run, save, summarize
@@ -87,6 +91,11 @@ def bench(
 
     if name not in SETS:
         raise typer.BadParameter(f"--set must be one of {', '.join(SETS)}")
+    if retrieval:
+        from reqlens.benchmark import retrieval_hits, retrieval_markdown
+
+        typer.echo(retrieval_markdown(retrieval_hits(name)))
+        return
     results = []
     for i in range(1, runs + 1):
         try:

@@ -133,9 +133,19 @@ The dev result (5/6 conflicts, 5/5 precision, 0/2 decoys) **held on the unseen t
 
 Still open: about one conflict per run is missed, mostly the unit conversions, and the word list misses vague phrases at level 2 and 3.
 
+**Is the search the bottleneck?** The conflict agent only sees what `find_related` returns, so a partner that is not retrieved can never be found. Retrieval is measured on its own, with the requirement text as the query and no LLM answers:
+
+| Set | hit@1 | hit@3 (what the agent sees) | hit@5 |
+|---|:---:|:---:|:---:|
+| dev (ACC) | 9/12 | **12/12** | 12/12 |
+| test (EPB) | 12/12 | **12/12** | 12/12 |
+
+Every conflicting partner is in the top 3, in both directions. The missed conflicts are therefore **not a search problem**: the agent sees the partner and judges it wrongly, mostly when the values need a unit conversion. Converting units in code, before the LLM decides, is the next step.
+
 ```bash
 uv run reqlens bench                        # dev set, one run (answers are cached)
 uv run reqlens bench --set test --runs 5    # held-out set, 5 runs with an empty cache, mean and worst
+uv run reqlens bench --set test --retrieval # search hit@k only, no LLM answers
 ```
 
 ## Quick start

@@ -124,5 +124,33 @@
     "EPB-R-048",
     "EPB-R-049",
     "EPB-R-050"
-  ]
+  ],
+  "texts": {
+    "EPB-R-010": "When the driver pulls the EPB switch, the full clamping force shall be reached within 1.5 s.",
+    "EPB-R-011": "The full clamping force shall be reached no later than 1.0 s after the EPB switch is pulled.",
+    "EPB-R-012": "The EPB shall hold the fully loaded vehicle on slopes of up to 30 %.",
+    "EPB-R-013": "The maximum slope on which the EPB shall hold the fully loaded vehicle is 20 %.",
+    "EPB-R-014": "A red warning lamp shall be shown in the instrument cluster while the EPB is applied.",
+    "EPB-R-015": "The EPB shall release fast when the driver presses the EPB switch.",
+    "EPB-R-016": "The EPB shall re-clamp with adequate force after the brake discs have cooled down.",
+    "EPB-R-021": "The EPB actuators shall be mounted on the rear brake calipers.",
+    "EPB-R-022": "If the EPB switch is held while driving, the EPB shall decelerate the vehicle with at least 6 m/s\u00b2.",
+    "EPB-R-024": "The automatic drive-away release shall only be available when the driver's seat belt is fastened.",
+    "EPB-R-026": "Each EPB actuator shall generate a clamping force of at least 18 kN.",
+    "EPB-R-027": "The EPB shall apply automatically when the vehicle has been stationary with the engine off for 3 min.",
+    "EPB-R-028": "The EPB shall work at supply voltages from 9 V to 16 V.",
+    "EPB-R-029": "The EPB control unit shall store a fault when the supply voltage stays below 9 V for more than 500 ms.",
+    "EPB-R-030": "The instrument cluster shall show the message \"Parking brake applied\" when the vehicle is switched off.",
+    "EPB-R-031": "The actuators shall operate as quietly as possible.",
+    "EPB-R-032": "An audible warning shall be clearly noticeable when the driver leaves the vehicle with the EPB released.",
+    "EPB-R-033": "A yellow warning lamp shall be shown in the instrument cluster when an EPB fault is detected.",
+    "EPB-R-034": "The EPB shall provide a service mode that retracts the pistons for brake pad replacement.",
+    "EPB-R-041": "During dynamic braking with the EPB switch, the deceleration shall be limited to 4 m/s\u00b2.",
+    "EPB-R-043": "The automatic drive-away release shall work regardless of the seat belt status.",
+    "EPB-R-045": "The clamping force of each EPB actuator shall not exceed 1500 daN.",
+    "EPB-R-047": "The EPB shall apply automatically after the vehicle has stood still with the engine off for 120 s.",
+    "EPB-R-048": "The EPB shall work safely in all foreseeable situations.",
+    "EPB-R-049": "After a temporary undervoltage, the EPB shall be available again within a short time.",
+    "EPB-R-050": "The EPB shall only be released manually when the brake pedal is pressed."
+  }
 }
