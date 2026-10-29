@@ -26,6 +26,11 @@ class LLMUnavailableError(RuntimeError):
     """Every model was busy or out of quota."""
 
 
+class MissingAnswerError(RuntimeError):
+    """The model call ended without the typed answer, for example after a 429
+    inside LlamaIndex that only became a warning. Retried like a busy model."""
+
+
 def get_llm(model: str = MODELS[0]) -> GoogleGenAI:
     return GoogleGenAI(model=model)
 
@@ -59,6 +64,11 @@ def call_with_fallback[T](fn: Callable[[str], T], attempts: int = 2) -> T:
                 if error.code not in RETRY_CODES:
                     raise
                 print(f"{model} busy ({error.code}), attempt {attempt}/{attempts}")
+                time.sleep(10)
+            except MissingAnswerError as error:
+                print(
+                    f"{model} gave no typed answer ({error}), attempt {attempt}/{attempts}"
+                )
                 time.sleep(10)
             except httpx.TransportError as error:
                 # A dropped connection is as temporary as a busy model.

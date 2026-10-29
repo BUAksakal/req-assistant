@@ -1,5 +1,6 @@
+from reqlens.analysis_agent import Conflict, ConflictReport
 from reqlens.models import Requirement
-from reqlens.workflow import pick_conflict_candidates
+from reqlens.workflow import conflict_pairs, pick_conflict_candidates
 
 
 def req(req_id: str, text: str) -> Requirement:
@@ -23,3 +24,17 @@ def test_budget_prefers_similar_requirements_with_the_same_unit():
     picked = {r.id for r in pick_conflict_candidates(numeric, limit=2)}
 
     assert picked == {"R1", "R3"}
+
+
+def test_conflict_partners_are_matched_exactly():
+    report = ConflictReport(
+        conflicts=[
+            Conflict(with_id="5.1.4", reason="real partner"),
+            Conflict(with_id="5.1", reason="the requirement itself"),
+            Conflict(with_id="9.9.9", reason="invented ID"),
+        ]
+    )
+
+    pairs = conflict_pairs("5.1", report, {"5.1", "5.1.4"})
+
+    assert pairs == [{"first": "5.1", "second": "5.1.4", "reason": "real partner"}]

@@ -63,3 +63,16 @@ def test_a_dropped_connection_is_retried():
 
     assert llm.call_with_fallback(fn) == "ok"
     assert calls == [llm.MODELS[0], llm.MODELS[0]]
+
+
+def test_a_missing_typed_answer_is_retried_not_ignored():
+    calls = []
+
+    def fn(model):
+        calls.append(model)
+        if len(calls) == 1:
+            raise llm.MissingAnswerError("conflict report missing")
+        return "ok"
+
+    assert llm.call_with_fallback(fn) == "ok"
+    assert len(calls) == 2

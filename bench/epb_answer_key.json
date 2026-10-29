@@ -1,0 +1,128 @@
+{
+  "conflicts": [
+    {
+      "pair": [
+        "EPB-R-010",
+        "EPB-R-011"
+      ],
+      "level": 1,
+      "why": "Full clamping force within 1.5 s versus no later than 1.0 s."
+    },
+    {
+      "pair": [
+        "EPB-R-012",
+        "EPB-R-013"
+      ],
+      "level": 1,
+      "why": "Holding on 30 % slopes versus a maximum of 20 %."
+    },
+    {
+      "pair": [
+        "EPB-R-022",
+        "EPB-R-041"
+      ],
+      "level": 2,
+      "why": "At least 6 m/s\u00b2 versus limited to 4 m/s\u00b2."
+    },
+    {
+      "pair": [
+        "EPB-R-024",
+        "EPB-R-043"
+      ],
+      "level": 2,
+      "why": "Only with a fastened seat belt versus regardless of the seat belt. No numbers."
+    },
+    {
+      "pair": [
+        "EPB-R-026",
+        "EPB-R-045"
+      ],
+      "level": 3,
+      "why": "1500 daN is 15 kN, below the required 18 kN."
+    },
+    {
+      "pair": [
+        "EPB-R-027",
+        "EPB-R-047"
+      ],
+      "level": 3,
+      "why": "3 min is 180 s, not 120 s."
+    }
+  ],
+  "decoys": [
+    {
+      "pair": [
+        "EPB-R-014",
+        "EPB-R-033"
+      ],
+      "why": "Red lamp for applied, yellow lamp for a fault. Different states."
+    },
+    {
+      "pair": [
+        "EPB-R-028",
+        "EPB-R-029"
+      ],
+      "why": "Works from 9 V, and stores a fault below 9 V. Consistent."
+    }
+  ],
+  "vague": [
+    {
+      "id": "EPB-R-015",
+      "level": 1,
+      "why": "fast"
+    },
+    {
+      "id": "EPB-R-016",
+      "level": 1,
+      "why": "adequate"
+    },
+    {
+      "id": "EPB-R-031",
+      "level": 2,
+      "why": "as quietly as possible"
+    },
+    {
+      "id": "EPB-R-032",
+      "level": 2,
+      "why": "clearly noticeable"
+    },
+    {
+      "id": "EPB-R-048",
+      "level": 3,
+      "why": "in all foreseeable situations, untestable"
+    },
+    {
+      "id": "EPB-R-049",
+      "level": 3,
+      "why": "within a short time"
+    }
+  ],
+  "requirements": [
+    "EPB-R-010",
+    "EPB-R-011",
+    "EPB-R-012",
+    "EPB-R-013",
+    "EPB-R-014",
+    "EPB-R-015",
+    "EPB-R-016",
+    "EPB-R-021",
+    "EPB-R-022",
+    "EPB-R-024",
+    "EPB-R-026",
+    "EPB-R-027",
+    "EPB-R-028",
+    "EPB-R-029",
+    "EPB-R-030",
+    "EPB-R-031",
+    "EPB-R-032",
+    "EPB-R-033",
+    "EPB-R-034",
+    "EPB-R-041",
+    "EPB-R-043",
+    "EPB-R-045",
+    "EPB-R-047",
+    "EPB-R-048",
+    "EPB-R-049",
+    "EPB-R-050"
+  ]
+}

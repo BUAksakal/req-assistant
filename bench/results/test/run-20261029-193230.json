@@ -1,0 +1,29 @@
+{
+  "extraction": "26/26",
+  "levels": {
+    "1": {
+      "conflicts_agent": "2/2",
+      "conflicts_supervisor": "2/2",
+      "vague": "2/2"
+    },
+    "2": {
+      "conflicts_agent": "2/2",
+      "conflicts_supervisor": "2/2",
+      "vague": "0/2"
+    },
+    "3": {
+      "conflicts_agent": "1/2",
+      "conflicts_supervisor": "1/2",
+      "vague": "0/2"
+    }
+  },
+  "precision_agent": "5/5",
+  "recall_agent": "5/6",
+  "decoys_agent": "0/2",
+  "precision_supervisor": "5/5",
+  "recall_supervisor": "5/6",
+  "decoys_supervisor": "0/2",
+  "decoys_rejected_by_supervisor": "2/2",
+  "seconds": 250.6,
+  "set": "test"
+}
