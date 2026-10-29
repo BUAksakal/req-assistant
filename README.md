@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://guhlixj93lndfluucdkk35.streamlit.app/"><img src="https://img.shields.io/badge/live%20demo-open-111111?logo=streamlit&logoColor=white" alt="Live demo"></a>
+  <a href="https://reqlens.streamlit.app/"><img src="https://img.shields.io/badge/live%20demo-open-111111?logo=streamlit&logoColor=white" alt="Live demo"></a>
   <a href="https://github.com/BUAksakal/reqlens/actions/workflows/ci.yml"><img src="https://github.com/BUAksakal/reqlens/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white" alt="Python 3.12">
   <img src="https://img.shields.io/badge/LangGraph-supervisor%20agent-1C3C3C" alt="LangGraph">
@@ -142,7 +142,7 @@ uv run reqlens bench --set test --runs 5    # held-out set, 5 runs with an empty
 
 ### Live demo
 
-Open **[the live demo](https://guhlixj93lndfluucdkk35.streamlit.app/)**, upload a specification PDF and click **Analyze**. The demo runs on the free Gemini tier, so it may answer slowly or ask you to try again later.
+Open **[the live demo](https://reqlens.streamlit.app/)**, upload a specification PDF and click **Analyze**. The demo runs on the free Gemini tier, so it may answer slowly or ask you to try again later.
 
 ### Local
 
