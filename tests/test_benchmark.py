@@ -1,4 +1,11 @@
-from reqlens.benchmark import answer_key, reported_pairs, score, summarize
+from reqlens import requirement_index
+from reqlens.benchmark import (
+    answer_key,
+    reported_pairs,
+    retrieval_hits,
+    score,
+    summarize,
+)
 
 KEY = answer_key("dev")
 
@@ -61,3 +68,29 @@ def test_summary_shows_mean_and_worst_run():
 
     assert "| Conflicts kept after the supervisor | 4.0/6 | 3/6 |" in table
     assert "| Decoys reported as conflicts | 0.5/2 | 1/2 |" in table
+
+
+def test_hit_at_k_counts_the_partner_and_skips_the_query_itself(monkeypatch):
+    key = answer_key("test")
+    partner = {}
+    for c in key["conflicts"]:
+        a, b = c["pair"]
+        partner[a], partner[b] = (b, c["level"]), (a, c["level"])
+    text_to_id = {text: rid for rid, text in key["texts"].items()}
+
+    def fake_search(index, query, top_k):
+        # The query itself comes first. Level 1 partners come second, the
+        # others are not retrieved at all.
+        rid = text_to_id[query]
+        other, level = partner[rid]
+        ranked = [rid] + ([other] if level == 1 else [])
+        return [(r, 1.0) for r in ranked][:top_k]
+
+    monkeypatch.setattr(requirement_index, "build_index", lambda reqs: None)
+    monkeypatch.setattr(requirement_index, "search", fake_search)
+
+    result = retrieval_hits("test")
+
+    assert result["levels"][1][1] == "4/4"
+    assert result["levels"][2][5] == "0/4"
+    assert result["all"][1] == "4/12"

@@ -123,5 +123,32 @@
     "ACC-R-048",
     "ACC-R-049",
     "ACC-R-050"
-  ]
+  ],
+  "texts": {
+    "ACC-R-010": "The driver shall be able to set a target speed between 30 km/h and 160 km/h.",
+    "ACC-R-011": "The maximum target speed the driver can set shall be 180 km/h.",
+    "ACC-R-012": "The time gap to the vehicle ahead shall be at least 1.0 s in every gap setting.",
+    "ACC-R-013": "The shortest selectable time gap setting shall be 0.8 s.",
+    "ACC-R-014": "A long press on the speed button shall change the set speed in steps of 5 km/h.",
+    "ACC-R-015": "The system shall react fast to a vehicle cutting in.",
+    "ACC-R-016": "The system shall keep a sufficient distance to stationary objects.",
+    "ACC-R-020": "If the system reaches its limits, a takeover request shall be shown to the driver within 2 s.",
+    "ACC-R-021": "The system shall use the service brake for all decelerations.",
+    "ACC-R-022": "In ACC mode, the system shall decelerate the vehicle by at most 3.5 m/s\u00b2.",
+    "ACC-R-024": "The longitudinal acceleration requested by ACC shall not exceed 2.5 m/s\u00b2.",
+    "ACC-R-026": "ACC shall only be active at vehicle speeds above 30 km/h.",
+    "ACC-R-027": "The radar sensor shall detect vehicles at a distance of at least 150 m.",
+    "ACC-R-028": "The camera shall detect lane markings at a distance of at least 60 m.",
+    "ACC-R-030": "To follow a braking vehicle ahead, ACC may request a deceleration of up to 5 m/s\u00b2.",
+    "ACC-R-031": "Braking interventions shall feel as smooth as possible.",
+    "ACC-R-032": "The display shall inform the driver appropriately about the system state.",
+    "ACC-R-033": "A short press on the speed button shall change the set speed in steps of 1 km/h.",
+    "ACC-R-034": "The ACC status shall be shown in the instrument cluster.",
+    "ACC-R-041": "A takeover request shall be issued no later than 4 s after the system has reached its limits.",
+    "ACC-R-045": "When resuming after a stop, ACC shall accelerate the vehicle with up to 0.3 g.",
+    "ACC-R-047": "In stop-and-go traffic, ACC shall keep controlling the vehicle down to 5 m/s.",
+    "ACC-R-048": "The system shall work reliably in all weather conditions.",
+    "ACC-R-049": "After a sensor fault, the system shall recover within a reasonable time.",
+    "ACC-R-050": "The driver shall be able to switch ACC off with one button press."
+  }
 }

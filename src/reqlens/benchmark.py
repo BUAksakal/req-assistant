@@ -146,6 +146,61 @@ def run(name: str = "dev", fresh: bool = False) -> dict:
     return result
 
 
+def retrieval_hits(name: str, ks: tuple[int, ...] = (1, 3, 5)) -> dict:
+    """How often the conflicting partner is among the top k search results.
+
+    The conflict agent only sees what find_related returns, so a partner that
+    is not retrieved cannot be found. The query is the requirement text, close
+    to the queries the agent writes. Only embeddings are used, no LLM answers.
+    """
+    from reqlens.models import Requirement
+    from reqlens.requirement_index import build_index, search
+
+    key = answer_key(name)
+    requirements = [
+        Requirement(id=rid, text=text, source=name, page=1)
+        for rid, text in key["texts"].items()
+    ]
+    index = build_index(requirements)
+    hits = {lv: dict.fromkeys(ks, 0) for lv in LEVELS}
+    totals = dict.fromkeys(LEVELS, 0)
+    for conflict in key["conflicts"]:
+        for query_id, partner in (conflict["pair"], conflict["pair"][::-1]):
+            found = [
+                rid
+                for rid, _ in search(index, key["texts"][query_id], top_k=max(ks) + 1)
+                if rid != query_id
+            ]
+            totals[conflict["level"]] += 1
+            for k in ks:
+                hits[conflict["level"]][k] += partner in found[:k]
+    result = {
+        "levels": {
+            lv: {k: _ratio(hits[lv][k], totals[lv]) for k in ks} for lv in LEVELS
+        },
+        "all": {
+            k: _ratio(sum(hits[lv][k] for lv in LEVELS), sum(totals.values()))
+            for k in ks
+        },
+    }
+    return result
+
+
+def retrieval_markdown(result: dict) -> str:
+    ks = list(result["all"])
+    rows = [
+        "| Level | " + " | ".join(f"hit@{k}" for k in ks) + " |",
+        "|---|" + ":---:|" * len(ks),
+    ]
+    names = {1: "1: next to each other", 2: "2: pages apart", 3: "3: unit conversion"}
+    for lv, values in result["levels"].items():
+        rows.append(f"| {names[lv]} | " + " | ".join(values[k] for k in ks) + " |")
+    rows.append(
+        "| **all** | " + " | ".join(f"**{result['all'][k]}**" for k in ks) + " |"
+    )
+    return "\n".join(rows)
+
+
 def save(result: dict) -> Path:
     """Keep every run, so a summary can be checked and survives a quota stop."""
     folder = BENCH / "results" / result["set"]
