@@ -1,0 +1,156 @@
+# ReqLens held-out TEST set: a fictional EPB specification with a known answer key.
+# Written after the supervisor prompt was tuned on the ACC dev set. Its results are
+# only reported, never used to change prompts or code.
+document:
+  company: Musterwerk Automotive GmbH
+  title: "Lastenheft: Electric Parking Brake (EPB)"
+  doc_id: LH-EPB-0001
+  version: "1.0"
+  date: "2026-10-29"
+  status: Benchmark (test set)
+  confidentiality: Public
+  revisions:
+    - version: "1.0"
+      date: "2026-10-29"
+      author: B. Aksakal
+      change: Held-out test version with answer key
+
+sections:
+  - number: "1"
+    title: Introduction
+    text: >-
+      This document specifies the Electric Parking Brake (EPB) of passenger cars
+      (category M1). The EPB holds the parked vehicle with an electric actuator on
+      the rear brakes and replaces the mechanical hand brake. Requirements are
+      identified by IDs like EPB-R-010.
+
+  - number: "2"
+    title: Apply and Hold
+    requirements:
+      - id: EPB-R-010
+        title: Apply time
+        text: When the driver pulls the EPB switch, the full clamping force shall be reached within 1.5 s.
+      - id: EPB-R-011
+        title: Apply time limit
+        text: The full clamping force shall be reached no later than 1.0 s after the EPB switch is pulled.
+      - id: EPB-R-012
+        title: Holding on slopes
+        text: The EPB shall hold the fully loaded vehicle on slopes of up to 30 %.
+      - id: EPB-R-013
+        title: Maximum slope
+        text: The maximum slope on which the EPB shall hold the fully loaded vehicle is 20 %.
+      - id: EPB-R-014
+        title: Applied indication
+        text: A red warning lamp shall be shown in the instrument cluster while the EPB is applied.
+      - id: EPB-R-015
+        title: Release reaction
+        text: The EPB shall release fast when the driver presses the EPB switch.
+      - id: EPB-R-016
+        title: Clamping on hot brakes
+        text: The EPB shall re-clamp with adequate force after the brake discs have cooled down.
+
+  - number: "3"
+    title: Actuator and Power Supply
+    requirements:
+      - id: EPB-R-021
+        title: Actuator location
+        text: The EPB actuators shall be mounted on the rear brake calipers.
+      - id: EPB-R-022
+        title: Dynamic braking
+        text: If the EPB switch is held while driving, the EPB shall decelerate the vehicle with at least 6 m/s².
+      - id: EPB-R-024
+        title: Drive-away release condition
+        text: The automatic drive-away release shall only be available when the driver's seat belt is fastened.
+      - id: EPB-R-026
+        title: Clamping force
+        text: Each EPB actuator shall generate a clamping force of at least 18 kN.
+      - id: EPB-R-027
+        title: Automatic apply
+        text: The EPB shall apply automatically when the vehicle has been stationary with the engine off for 3 min.
+      - id: EPB-R-028
+        title: Operating voltage
+        text: The EPB shall work at supply voltages from 9 V to 16 V.
+      - id: EPB-R-029
+        title: Undervoltage fault
+        text: The EPB control unit shall store a fault when the supply voltage stays below 9 V for more than 500 ms.
+
+  - number: "4"
+    title: Comfort and Display
+    requirements:
+      - id: EPB-R-030
+        title: Status message
+        text: The instrument cluster shall show the message "Parking brake applied" when the vehicle is switched off.
+      - id: EPB-R-031
+        title: Actuator noise
+        text: The actuators shall operate as quietly as possible.
+      - id: EPB-R-032
+        title: Release warning
+        text: An audible warning shall be clearly noticeable when the driver leaves the vehicle with the EPB released.
+      - id: EPB-R-033
+        title: Fault indication
+        text: A yellow warning lamp shall be shown in the instrument cluster when an EPB fault is detected.
+      - id: EPB-R-034
+        title: Service mode
+        text: The EPB shall provide a service mode that retracts the pistons for brake pad replacement.
+
+  - number: "5"
+    title: Driver Assistance and Degradation
+    requirements:
+      - id: EPB-R-041
+        title: Dynamic braking limit
+        text: During dynamic braking with the EPB switch, the deceleration shall be limited to 4 m/s².
+      - id: EPB-R-043
+        title: Drive-away release
+        text: The automatic drive-away release shall work regardless of the seat belt status.
+      - id: EPB-R-045
+        title: Actuator force limit
+        text: The clamping force of each EPB actuator shall not exceed 1500 daN.
+      - id: EPB-R-047
+        title: Automatic apply timing
+        text: The EPB shall apply automatically after the vehicle has stood still with the engine off for 120 s.
+      - id: EPB-R-048
+        title: Robustness
+        text: The EPB shall work safely in all foreseeable situations.
+      - id: EPB-R-049
+        title: Fault recovery
+        text: After a temporary undervoltage, the EPB shall be available again within a short time.
+      - id: EPB-R-050
+        title: Manual release
+        text: The EPB shall only be released manually when the brake pedal is pressed.
+
+answer_key:
+  conflicts:
+    # Level 1: same section, same unit, next to each other
+    - pair: [EPB-R-010, EPB-R-011]
+      level: 1
+      why: Full clamping force within 1.5 s versus no later than 1.0 s.
+    - pair: [EPB-R-012, EPB-R-013]
+      level: 1
+      why: Holding on 30 % slopes versus a maximum of 20 %.
+    # Level 2: different sections, pages apart
+    - pair: [EPB-R-022, EPB-R-041]
+      level: 2
+      why: At least 6 m/s² versus limited to 4 m/s².
+    - pair: [EPB-R-024, EPB-R-043]
+      level: 2
+      why: Only with a fastened seat belt versus regardless of the seat belt. No numbers.
+    # Level 3: only visible after a unit conversion
+    - pair: [EPB-R-026, EPB-R-045]
+      level: 3
+      why: 1500 daN is 15 kN, below the required 18 kN.
+    - pair: [EPB-R-027, EPB-R-047]
+      level: 3
+      why: 3 min is 180 s, not 120 s.
+  decoys:
+    # Look alike, but do not contradict each other
+    - pair: [EPB-R-014, EPB-R-033]
+      why: Red lamp for applied, yellow lamp for a fault. Different states.
+    - pair: [EPB-R-028, EPB-R-029]
+      why: Works from 9 V, and stores a fault below 9 V. Consistent.
+  vague:
+    - {id: EPB-R-015, level: 1, why: "fast"}
+    - {id: EPB-R-016, level: 1, why: "adequate"}
+    - {id: EPB-R-031, level: 2, why: "as quietly as possible"}
+    - {id: EPB-R-032, level: 2, why: "clearly noticeable"}
+    - {id: EPB-R-048, level: 3, why: "in all foreseeable situations, untestable"}
+    - {id: EPB-R-049, level: 3, why: "within a short time"}

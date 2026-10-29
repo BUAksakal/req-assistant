@@ -96,35 +96,46 @@ The regex only knows the format it was written for. The supervisor notices this 
 | Ambiguous wording | **1 / 3** ⚠️ |
 | Untestable requirement | not checked yet |
 
-### Benchmark: three levels, with decoys
+### Benchmark: three levels, decoys, and a held-out test set
 
-Inspired by [GAIA](https://huggingface.co/papers/2311.12983): one specification with an unambiguous [answer key](bench/acc_benchmark.yaml), conflicts at three levels of difficulty, and **decoys**, pairs that look like conflicts but are not. Guessing "conflict" everywhere costs precision.
+Inspired by [GAIA](https://huggingface.co/papers/2311.12983): specifications with an unambiguous answer key, conflicts at three levels of difficulty, and **decoys**, pairs that look like conflicts but are not. Guessing "conflict" everywhere costs precision.
 
-[`bench/acc_benchmark.pdf`](bench/acc_benchmark.pdf): 25 requirements for an Adaptive Cruise Control, IDs like `ACC-R-010`.
+| Set | Document | Role |
+|---|---|---|
+| **dev** | [`acc_benchmark.pdf`](bench/acc_benchmark.pdf), Adaptive Cruise Control, 25 requirements ([key](bench/acc_benchmark.yaml)) | Used to tune the supervisor prompt, so its scores are optimistic |
+| **test** | [`epb_benchmark.pdf`](bench/epb_benchmark.pdf), Electric Parking Brake, 26 requirements ([key](bench/epb_benchmark.yaml)) | Written after the tuning. Only reported, never used to change prompts or code |
 
-| Level | Conflicts found by the agent | Kept by the supervisor | Vague wording found |
-|---|:---:|:---:|:---:|
-| 1: next to each other | 2/2 | 2/2 | 2/2 |
-| 2: pages apart | 2/2 | 2/2 | 1/2 |
-| 3: only visible after a unit conversion (`0.3 g` vs `2.5 m/s²`) | 1/2 | 1/2 | 0/2 |
+Levels: **1** next to each other, **2** pages apart (one pair has no numbers at all), **3** only visible after a unit conversion (`1500 daN` vs `18 kN`, `3 min` vs `120 s`).
 
-- **Extraction:** 25/25 requirements, the regex found 0.
-- **Conflict agent:** 5 of 6 conflicts found, **all 5 correct**, no decoy reported.
-- **Supervisor:** keeps all 5 correct conflicts, and rejects **2/2 decoys** when they are handed to it as conflicts.
-- **Time:** 57 s from PDF to engineer review on a fresh run.
+**Results on the held-out test set**, 4 runs with an empty cache ([raw results](bench/results/test)):
 
-**What the benchmark changed.** The first version of the supervisor only accepted a conflict "if a system cannot satisfy both", so it dropped *within 2 s* vs *no later than 4 s*. The benchmark measured the damage, the prompt was changed, and the same run was scored again:
+| Metric | Mean | Worst run |
+|---|:---:|:---:|
+| Requirements extracted (regex: 0) | 26/26 | 26/26 |
+| Conflicts kept after the supervisor | **5.0/6** | 5/6 |
+| level 1: next to each other | 2.0/2 | 2/2 |
+| level 2: pages apart | 1.8/2 | 1/2 |
+| level 3: unit conversion | 1.2/2 | 1/2 |
+| Precision after the supervisor | **5/5** | 5/5 |
+| Decoys reported as conflicts | **0/2** | 0/2 |
+| Decoys rejected when handed to the supervisor | 2/2 | 2/2 |
+| Vague wording found (word list) | 2/6 | 2/6 |
+| Time until the engineer review | 318 s | 532 s |
 
-| Supervisor | Correct conflicts kept | Decoys rejected |
+The dev result (5/6 conflicts, 5/5 precision, 0/2 decoys) **held on the unseen test set**, so tuning on the dev set did not inflate the score. A fifth run was stopped by the free-tier quota (15 requests per minute).
+
+**What the benchmark changed.** The first version of the supervisor only accepted a conflict "if a system cannot satisfy both", so it dropped *within 2 s* vs *no later than 4 s*. The dev set measured the damage, the prompt was changed, and the held-out test set confirmed the fix:
+
+| Supervisor | Correct conflicts kept (dev) | Decoys rejected |
 |---|:---:|:---:|
 | v1: "conflict only if both cannot be met" | 3/5 | not measured |
 | v2: "drop only clear false alarms, keep when unsure" | **5/5** | **2/2** |
 
-Still open: one unit-conversion conflict (`5 m/s` vs `30 km/h`) is not found, and the word list misses vague phrases at level 2 and 3.
+Still open: about one conflict per run is missed, mostly the unit conversions, and the word list misses vague phrases at level 2 and 3.
 
 ```bash
-uv run reqlens bench            # score one run (answers are cached)
-uv run reqlens bench --fresh    # ask every LLM answer again, to measure run-to-run variation
+uv run reqlens bench                        # dev set, one run (answers are cached)
+uv run reqlens bench --set test --runs 5    # held-out set, 5 runs with an empty cache, mean and worst
 ```
 
 ## Quick start
@@ -230,7 +241,7 @@ scripts/build_examples.py # renders the example spec PDF and answer keys from YA
 scripts/build_benchmark.py # renders the benchmark PDF and answer key
 examples/                 # example specification (YAML source + PDF)
 eval/                     # answer keys
-bench/                    # benchmark specification, PDF and answer key
+bench/                    # dev and test specifications, PDFs, answer keys and saved runs
 Dockerfile                # container image for the web interface
 ```
 
@@ -246,7 +257,7 @@ Being honest about what does not work yet:
 - **Free Gemini tier** is limited (few requests per day, frequent `503`). ReqLens switches between five models and caches every answer, but a full analysis can take minutes.
 - **Document size:** the LLM reads at most **60 pages** per document (9 requests) and uploads are capped at **20 MB**, so one file cannot use up the daily quota. Longer specifications have to be split.
 - **Demo history** is stored inside the running app and resets when the demo restarts.
-- The conflict analysis has been measured on two fictional specifications (example and benchmark), not yet on a real one.
+- The conflict analysis has been measured on three fictional specifications (example, dev and held-out test set), not yet on a real one.
 
 ## Roadmap
 
@@ -265,7 +276,7 @@ Being honest about what does not work yet:
 - [x] Supervisor agent with guardrails
 - [x] Analysis on a real regulation (UN R152)
 - [x] Docker image and live demo
-- [x] GAIA-style benchmark with three levels and decoys
+- [x] GAIA-style benchmark with three levels, decoys and a held-out test set
 - [x] Supervisor keeps conflicts it is unsure about (measured with the benchmark)
 - [ ] Check each requirement pair only once
 - [ ] LLM-based ambiguity check

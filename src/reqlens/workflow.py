@@ -10,6 +10,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import interrupt
 
 from reqlens.ambiguity import find_vague_words
+from reqlens.analysis_agent import ConflictReport
 from reqlens.models import Requirement
 from reqlens.pdf_reader import extract_requirements
 
@@ -23,7 +24,7 @@ class State(TypedDict, total=False):
     requirements: list[Requirement]
     extraction: str
     vague: dict[str, list[str]]
-    conflicts: dict[str, str]
+    conflicts: list[dict[str, str]]
     approved: list[str]
     report: str
 
@@ -127,6 +128,20 @@ def pick_conflict_candidates(
     return sorted(numeric, key=similarity, reverse=True)[:limit]
 
 
+def conflict_pairs(
+    req_id: str, report: ConflictReport, known: set[str]
+) -> list[dict[str, str]]:
+    """Keep the reported conflicts whose partner is a real, different requirement.
+
+    IDs are matched exactly, so 5.1 is never mistaken for 5.1.4.
+    """
+    return [
+        {"first": req_id, "second": c.with_id.strip(), "reason": c.reason}
+        for c in report.conflicts
+        if c.with_id.strip() in known and c.with_id.strip() != req_id
+    ]
+
+
 def check_conflicts(state: State) -> State:
     from reqlens.analysis_agent import make_conflict_checker
     from reqlens.cache import fingerprint, lookup, store
@@ -145,23 +160,29 @@ def check_conflicts(state: State) -> State:
             }
         )
     check = None
-    conflicts = {}
+    conflicts, seen = [], set()
+    known = {req.id for req in requirements}
     for req in candidates:
-        key = f"conflict:{document}:{req.id}"
-        answer = lookup(key)
-        if answer is None:
+        key = f"conflict-report:{document}:{req.id}"
+        saved = lookup(key)
+        if saved is None:
             if check is None:
                 check = make_conflict_checker(
                     requirements,
                     on_search=lambda q, hits: progress({"search": q, "hits": hits}),
                 )
             progress({"checking": req.id})
-            answer = call_with_fallback(partial(check, req.id))
-            store(key, answer)
+            saved = call_with_fallback(partial(check, req.id)).model_dump_json()
+            store(key, saved)
         else:
             progress({"cached": req.id})
-        if "no conflict" not in answer.lower():
-            conflicts[req.id] = answer
+        for conflict in conflict_pairs(
+            req.id, ConflictReport.model_validate_json(saved), known
+        ):
+            pair = frozenset((conflict["first"], conflict["second"]))
+            if pair not in seen:
+                seen.add(pair)
+                conflicts.append(conflict)
     return {"conflicts": conflicts}
 
 
@@ -173,13 +194,10 @@ def verify_findings(state: State) -> State:
 
     progress = get_stream_writer()
     by_id = {req.id: req for req in state["requirements"]}
-    verified = {}
-    for req_id, claim in state["conflicts"].items():
-        others = [other for other in by_id if other != req_id and other in claim]
-        if not others:
-            verified[req_id] = claim
-            continue
-        first, second = by_id[req_id], by_id[others[0]]
+    verified = []
+    for conflict in state["conflicts"]:
+        first, second = by_id[conflict["first"]], by_id[conflict["second"]]
+        claim = conflict["reason"]
         # The prompt is part of the key: a changed prompt must not reuse old verdicts.
         pair = f"{VERIFY_PROMPT.template}|{first.text}|{second.text}|{claim}"
         key = f"verify:{fingerprint(pair)}"
@@ -202,18 +220,20 @@ def verify_findings(state: State) -> State:
         }
         progress(
             {
-                "supervisor": f"{label[verdict.verdict]} {req_id} ↔ {second.id}: "
+                "supervisor": f"{label[verdict.verdict]} {first.id} ↔ {second.id}: "
                 f"{verdict.reason}"
             }
         )
         if verdict.keep:
-            verified[req_id] = claim
+            verified.append(conflict)
     return {"conflicts": verified}
 
 
 def review(state: State) -> State:
     findings = [f"{rid}: vague words {w}" for rid, w in state["vague"].items()]
-    findings += [f"{rid}: {reason}" for rid, reason in state["conflicts"].items()]
+    findings += [
+        f"{c['first']}: {c['second']}: {c['reason']}" for c in state["conflicts"]
+    ]
     approved = interrupt(findings)
     return {"approved": approved}
 

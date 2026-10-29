@@ -73,20 +73,35 @@ def analyze(
 
 @app.command()
 def bench(
+    name: Annotated[
+        str, typer.Option("--set", help="dev (used for tuning) or test (held out).")
+    ] = "dev",
+    runs: Annotated[int, typer.Option(help="Repeat with an empty cache.")] = 1,
     fresh: Annotated[
         bool, typer.Option("--fresh", help="Ask every LLM answer again.")
     ] = False,
 ) -> None:
-    """Score ReqLens on the benchmark specification with its answer key."""
-    from reqlens.benchmark import as_markdown, run
+    """Score ReqLens on a benchmark specification with its answer key."""
+    from reqlens.benchmark import SETS, as_markdown, run, save, summarize
     from reqlens.llm import LLMUnavailableError
 
-    try:
-        result = run(fresh=fresh)
-    except LLMUnavailableError as error:
-        typer.echo(f"\n{error}")
+    if name not in SETS:
+        raise typer.BadParameter(f"--set must be one of {', '.join(SETS)}")
+    results = []
+    for i in range(1, runs + 1):
+        try:
+            # Repeated runs only make sense with an empty cache.
+            result = run(name, fresh=fresh or runs > 1)
+        except LLMUnavailableError as error:
+            typer.echo(f"\nRun {i} stopped: {error}")
+            break
+        results.append(result)
+        typer.echo(f"\nRun {i}/{runs} saved as {save(result).name}")
+        typer.echo(as_markdown(result))
+    if len(results) > 1:
+        typer.echo("\n" + summarize(results))
+    if not results:
         raise typer.Exit(1)
-    typer.echo(as_markdown(result))
 
 
 @app.command()

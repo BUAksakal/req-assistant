@@ -1,4 +1,8 @@
-"""GAIA-style benchmark: one specification, a known answer key, three levels.
+"""GAIA-style benchmark: specifications with a known answer key, three levels.
+
+There are two sets. "dev" (ACC) was used to tune the prompts, so its scores are
+optimistic. "test" (EPB) was written afterwards and is only reported, never
+used to change prompts or code.
 
 Level 1 conflicts sit next to each other, level 2 conflicts are pages apart and
 level 3 conflicts only show after a unit conversion. Decoys look like conflicts
@@ -7,26 +11,28 @@ but are not, so reporting everything as a conflict costs precision.
 
 import contextlib
 import json
-import re
 import tempfile
 import time
 import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-BENCH_PDF = ROOT / "bench" / "acc_benchmark.pdf"
-ANSWER_KEY = ROOT / "bench" / "acc_answer_key.json"
+BENCH = ROOT / "bench"
+SETS = {"dev": "acc", "test": "epb"}
 LEVELS = (1, 2, 3)
 
 
-def reported_pairs(conflicts: dict[str, str], ids: list[str]) -> set[frozenset]:
-    """Turn {requirement: claim} into pairs, using the other ID named in the claim."""
-    pairs = set()
-    for req_id, claim in conflicts.items():
-        for other in re.findall(r"[A-Z]+-[A-Z]-\d{3}|[A-Z]+-\d{3}", claim):
-            if other != req_id and other in ids:
-                pairs.add(frozenset((req_id, other)))
-    return pairs
+def answer_key(name: str) -> dict:
+    return json.loads((BENCH / f"{SETS[name]}_answer_key.json").read_text("utf-8"))
+
+
+def reported_pairs(conflicts: list[dict[str, str]], ids: list[str]) -> set[frozenset]:
+    """The requirement pairs a run reported, ignoring unknown IDs."""
+    return {
+        frozenset((c["first"], c["second"]))
+        for c in conflicts
+        if c["first"] in ids and c["second"] in ids
+    }
 
 
 def _ratio(hit: int, total: int) -> str:
@@ -37,8 +43,8 @@ def score(
     key: dict,
     extracted: list[str],
     vague: list[str],
-    agent: dict[str, str],
-    verified: dict[str, str],
+    agent: list[dict[str, str]],
+    verified: list[dict[str, str]],
 ) -> dict:
     """Compare one run with the answer key.
 
@@ -103,7 +109,7 @@ def supervisor_rejects_decoys(key: dict, requirements: dict) -> str:
     return _ratio(rejected, len(key["decoys"]))
 
 
-def run(pdf: Path = BENCH_PDF, fresh: bool = False) -> dict:
+def run(name: str = "dev", fresh: bool = False) -> dict:
     """Run the workflow up to the engineer review and score it.
 
     With fresh=True the run uses an empty cache, so every LLM answer is asked
@@ -111,13 +117,13 @@ def run(pdf: Path = BENCH_PDF, fresh: bool = False) -> dict:
     """
     from reqlens.workflow import build_workflow
 
-    key = json.loads(ANSWER_KEY.read_text(encoding="utf-8"))
-    pdf = Path(pdf).resolve()
+    key = answer_key(name)
+    pdf = BENCH / f"{SETS[name]}_benchmark.pdf"
     place = tempfile.TemporaryDirectory() if fresh else contextlib.nullcontext()
     with place as folder, contextlib.chdir(folder or Path.cwd()):
         workflow = build_workflow()
         config = {"configurable": {"thread_id": str(uuid.uuid4())}}
-        agent = {}
+        agent = []
         start = time.perf_counter()
         for update in workflow.stream({"pdf": str(pdf)}, config, stream_mode="updates"):
             if "check_conflicts" in update:
@@ -136,7 +142,79 @@ def run(pdf: Path = BENCH_PDF, fresh: bool = False) -> dict:
     )
     result["decoys_rejected_by_supervisor"] = decoys_rejected
     result["seconds"] = round(seconds, 1)
+    result["set"] = name
     return result
+
+
+def save(result: dict) -> Path:
+    """Keep every run, so a summary can be checked and survives a quota stop."""
+    folder = BENCH / "results" / result["set"]
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / f"run-{time.strftime('%Y%m%d-%H%M%S')}.json"
+    path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
+def _hits(ratio: str) -> tuple[int, int]:
+    hit, total = ratio.split("/")
+    return int(hit), int(total)
+
+
+def summarize(results: list[dict]) -> str:
+    """Mean and worst result over several runs, as a markdown table."""
+    metrics = [
+        ("Requirements extracted", lambda r: r["extraction"], max),
+        ("Conflicts found by the agent", lambda r: r["recall_agent"], max),
+        ("Conflicts kept after the supervisor", lambda r: r["recall_supervisor"], max),
+        *(
+            (
+                f"  level {lv}",
+                lambda r, lv=lv: r["levels"][lv]["conflicts_supervisor"],
+                max,
+            )
+            for lv in LEVELS
+        ),
+        ("Precision after the supervisor", lambda r: r["precision_supervisor"], max),
+        ("Decoys reported as conflicts", lambda r: r["decoys_supervisor"], min),
+        (
+            "Decoys rejected when handed to the supervisor",
+            lambda r: r["decoys_rejected_by_supervisor"],
+            max,
+        ),
+        ("Vague wording found", lambda r: _sum_vague(r), max),
+    ]
+    # Results read back from JSON have "1" instead of 1 as level keys.
+    results = [
+        {**r, "levels": {int(k): v for k, v in r["levels"].items()}} for r in results
+    ]
+    rows = [
+        f"| Metric | Mean over {len(results)} runs | Worst run |",
+        "|---|:---:|:---:|",
+    ]
+    for label, get, better in metrics:
+        pairs = [_hits(get(r)) for r in results]
+        pairs = [(hit, total) for hit, total in pairs if total]
+        if not pairs:
+            rows.append(f"| {label} | n/a | n/a |")
+            continue
+        total = pairs[0][1]
+        mean = sum(hit for hit, _ in pairs) / len(pairs)
+        worst = (
+            min(pairs, key=lambda p: p[0] / p[1])
+            if better is max
+            else max(pairs, key=lambda p: p[0] / p[1])
+        )
+        rows.append(f"| {label} | {mean:.1f}/{total} | {worst[0]}/{worst[1]} |")
+    seconds = [r["seconds"] for r in results]
+    rows.append(
+        f"| Seconds until review | {sum(seconds) / len(seconds):.0f} | {max(seconds):.0f} |"
+    )
+    return "\n".join(rows)
+
+
+def _sum_vague(result: dict) -> str:
+    hits = [_hits(v["vague"]) for v in result["levels"].values()]
+    return f"{sum(h for h, _ in hits)}/{sum(t for _, t in hits)}"
 
 
 def as_markdown(result: dict) -> str:
