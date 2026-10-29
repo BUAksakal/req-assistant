@@ -10,6 +10,7 @@
   <img src="https://img.shields.io/badge/LlamaIndex-agent%20%2B%20RAG-7C3AED" alt="LlamaIndex">
   <img src="https://img.shields.io/badge/LLM-Gemini-4285F4?logo=googlegemini&logoColor=white" alt="Gemini">
   <img src="https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white" alt="Docker">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111" alt="MIT license"></a>
 </p>
 
 <p align="center">
@@ -296,4 +297,4 @@ Being honest about what does not work yet:
 
 ---
 
-<sub>The example specification and the company *Musterwerk Automotive GmbH* are fictional and were written for testing. AUTOSAR and UN documents are not included in this repository.</sub>
+<sub>Licensed under the [MIT License](LICENSE). The example specification and the company *Musterwerk Automotive GmbH* are fictional and were written for testing. AUTOSAR and UN documents are not included in this repository.</sub>
